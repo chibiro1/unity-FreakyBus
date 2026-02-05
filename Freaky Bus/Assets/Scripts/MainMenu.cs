@@ -12,24 +12,15 @@ public class MainMenu : MonoBehaviour
 
     [SerializeField] private GameObject optionsPanel;
 
-    [SerializeField] private GameObject playStripe;
-    [SerializeField] private GameObject optionsStripe;
-    [SerializeField] private GameObject exitStripe;
-
     private bool isBusy = false;
 
     private void OnEnable()
     {
-        ResetStripes();
+        
         isBusy = false;
     }
 
-    private void ResetStripes()
-    {
-        if (playStripe != null) playStripe.SetActive(false);
-        if (optionsStripe != null) optionsStripe.SetActive(false);
-        if (exitStripe != null) exitStripe.SetActive(false);
-    }
+    
 
     // ---------------- PLAY ----------------
 
@@ -38,10 +29,6 @@ public class MainMenu : MonoBehaviour
         if (isBusy) return;
 
         isBusy = true;
-        ResetStripes();
-
-        if (playStripe != null)
-            playStripe.SetActive(true);
 
         StartCoroutine(PlayWithDelay());
     }
@@ -59,10 +46,6 @@ public class MainMenu : MonoBehaviour
         if (isBusy) return;
 
         isBusy = true;
-        ResetStripes();
-
-        if (optionsStripe != null)
-            optionsStripe.SetActive(true);
 
         StartCoroutine(OpenOptionsWithDelay());
     }
@@ -76,7 +59,6 @@ public class MainMenu : MonoBehaviour
 
     public void CloseOptions()
     {
-        ResetStripes();
         optionsPanel.SetActive(false);
         isBusy = false;
     }
@@ -88,10 +70,6 @@ public class MainMenu : MonoBehaviour
         if (isBusy) return;
 
         isBusy = true;
-        ResetStripes();
-
-        if (exitStripe != null)
-            exitStripe.SetActive(true);
 
         StartCoroutine(ExitWithDelay());
     }
