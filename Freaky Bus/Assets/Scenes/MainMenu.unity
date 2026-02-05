@@ -1650,10 +1650,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   playSceneName: Gameplay
-  playClickDelay: 1.5
-  optionsClickDelay: 0.4
-  exitClickDelay: 0.6
   optionsPanel: {fileID: 225246038}
+  sceneFader: {fileID: 2109609125}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,15 +1,22 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
     [SerializeField] private string playSceneName = "Gameplay";
     [SerializeField] private GameObject optionsPanel;
+    [SerializeField] private SceneFader sceneFader;
 
     // ---------- PLAY ----------
     public void Play()
     {
-        SceneManager.LoadScene(playSceneName);
+        if (sceneFader != null)
+        {
+            sceneFader.FadeToScene(playSceneName);
+        }
+        else
+        {
+            Debug.LogWarning("SceneFader not assigned!");
+        }
     }
 
     // ---------- OPTIONS ----------
