@@ -4,18 +4,14 @@ using System.Collections;
 
 public class MainMenu : MonoBehaviour
 {
-    [Header("Scene Settings")]
-    [SerializeField] private string playSceneName = "Gameplay";
 
-    [Header("Click Delays (seconds)")]
+    [SerializeField] private string playSceneName = "Gameplay";
     [SerializeField] private float playClickDelay = 1.2f;
     [SerializeField] private float optionsClickDelay = 0.4f;
     [SerializeField] private float exitClickDelay = 0.6f;
 
-    [Header("UI Panels")]
     [SerializeField] private GameObject optionsPanel;
 
-    [Header("Button Feedback Stripes")]
     [SerializeField] private GameObject playStripe;
     [SerializeField] private GameObject optionsStripe;
     [SerializeField] private GameObject exitStripe;

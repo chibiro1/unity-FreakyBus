@@ -5,36 +5,28 @@ using System.Collections;
 
 public class SceneFader : MonoBehaviour
 {
-    [Header("UI Elements")]
-    [SerializeField] private Image fadePanel; // Assign your black UI Image
-    [SerializeField] private float fadeDuration = 1f; // seconds
+    [SerializeField] private Image fadePanel;
+    [SerializeField] private float fadeDuration = 1f; 
 
     private void Start()
     {
-        // Optional: fade in at scene start
+
         if (fadePanel != null)
         {
             Color c = fadePanel.color;
-            c.a = 1f; // start fully black
+            c.a = 1f;
             fadePanel.color = c;
             StartCoroutine(FadeIn());
         }
     }
 
     // ---------------- PUBLIC METHODS ----------------
-
-    /// <summary>
-    /// Fade to a scene by name
-    /// </summary>
     public void FadeToScene(string sceneName)
     {
         if (fadePanel == null) return;
         StartCoroutine(FadeOutAndLoad(sceneName));
     }
 
-    /// <summary>
-    /// Fade out only (optional, for menus)
-    /// </summary>
     public void FadeOutOnly(System.Action onComplete = null)
     {
         if (fadePanel == null) return;
@@ -56,7 +48,6 @@ public class SceneFader : MonoBehaviour
             yield return null;
         }
 
-        // Ensure fully transparent at end
         c.a = 0f;
         fadePanel.color = c;
     }
@@ -80,7 +71,6 @@ public class SceneFader : MonoBehaviour
             yield return null;
         }
 
-        // Ensure fully black at end
         c.a = 1f;
         fadePanel.color = c;
 
