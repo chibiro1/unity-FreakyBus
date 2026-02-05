@@ -4,18 +4,14 @@ using System.Collections;
 
 public class MainMenu : MonoBehaviour
 {
-    [Header("Scene Settings")]
     [SerializeField] private string playSceneName = "Gameplay";
 
-    [Header("Click Delays (seconds)")]
     [SerializeField] private float playClickDelay = 1.2f;
     [SerializeField] private float optionsClickDelay = 0.4f;
     [SerializeField] private float exitClickDelay = 0.6f;
 
-    [Header("UI Panels")]
     [SerializeField] private GameObject optionsPanel;
 
-    [Header("Button Feedback Stripes")]
     [SerializeField] private GameObject playStripe;
     [SerializeField] private GameObject optionsStripe;
     [SerializeField] private GameObject exitStripe;
@@ -35,8 +31,6 @@ public class MainMenu : MonoBehaviour
         if (exitStripe != null) exitStripe.SetActive(false);
     }
 
-    // ---------------- PLAY ----------------
-
     public void Play()
     {
         if (isBusy) return;
@@ -55,8 +49,6 @@ public class MainMenu : MonoBehaviour
         yield return new WaitForSecondsRealtime(playClickDelay);
         SceneManager.LoadScene(playSceneName);
     }
-
-    // ---------------- OPTIONS ----------------
 
     public void Options()
     {
@@ -84,8 +76,6 @@ public class MainMenu : MonoBehaviour
         optionsPanel.SetActive(false);
         isBusy = false;
     }
-
-    // ---------------- EXIT ----------------
 
     public void ExitGame()
     {
