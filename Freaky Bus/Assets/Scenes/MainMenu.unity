@@ -1201,7 +1201,7 @@ GameObject:
   - component: {fileID: 554397356}
   - component: {fileID: 554397355}
   m_Layer: 5
-  m_Name: menu  video
+  m_Name: menu video
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2074,13 +2074,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   playSceneName: Gameplay
-  playClickDelay: 1.5
-  optionsClickDelay: 0.4
-  exitClickDelay: 0.6
   optionsPanel: {fileID: 225246038}
-  playStripe: {fileID: 713976816}
-  optionsStripe: {fileID: 1202343685}
-  exitStripe: {fileID: 694485287}
+  sceneFader: {fileID: 2109609125}
 --- !u!1 &930416337
 GameObject:
   m_ObjectHideFlags: 0
