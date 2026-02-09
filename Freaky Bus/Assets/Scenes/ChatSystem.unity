@@ -185,8 +185,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -625,7 +625,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.5622641, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1043,8 +1043,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 50.296}
-  m_SizeDelta: {x: -20, y: -20}
+  m_AnchoredPosition: {x: 0, y: -10.7254}
+  m_SizeDelta: {x: -20, y: 484.9352}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1142252211
 GameObject:
@@ -1110,12 +1110,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.VerticalLayoutGroup
   m_Padding:
-    m_Left: 0
+    m_Left: -4
     m_Right: 0
-    m_Top: 0
+    m_Top: -4
     m_Bottom: 0
   m_ChildAlignment: 0
-  m_Spacing: 5
+  m_Spacing: -27
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
@@ -1224,7 +1224,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.24528301, g: 0, b: 0, a: 0.69803923}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1446,7 +1446,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 12.202595}
+  m_AnchoredPosition: {x: 0, y: 91}
   m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1276536990
@@ -1492,7 +1492,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 0.3886792, g: 0, b: 0, a: 0.392}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1530,6 +1530,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1539623227}
     m_Modifications:
+    - target: {fileID: 656836698384967299, guid: 8453c9453cdd2474da65c4c4e716c5f3, type: 3}
+      propertyPath: m_margin.z
+      value: -608.8324
+      objectReference: {fileID: 0}
     - target: {fileID: 6502402439666413854, guid: 8453c9453cdd2474da65c4c4e716c5f3, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1556,11 +1560,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6502402439666413854, guid: 8453c9453cdd2474da65c4c4e716c5f3, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 200
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 6502402439666413854, guid: 8453c9453cdd2474da65c4c4e716c5f3, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 50
+      value: 58.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6502402439666413854, guid: 8453c9453cdd2474da65c4c4e716c5f3, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6502402439666413854, guid: 8453c9453cdd2474da65c4c4e716c5f3, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 6502402439666413854, guid: 8453c9453cdd2474da65c4c4e716c5f3, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 6502402439666413854, guid: 8453c9453cdd2474da65c4c4e716c5f3, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1596,7 +1612,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6502402439666413854, guid: 8453c9453cdd2474da65c4c4e716c5f3, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -301
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 6502402439666413854, guid: 8453c9453cdd2474da65c4c4e716c5f3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1608,6 +1624,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6502402439666413854, guid: 8453c9453cdd2474da65c4c4e716c5f3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6502402439666413854, guid: 8453c9453cdd2474da65c4c4e716c5f3, type: 3}
+      propertyPath: m_ConstrainProportionsScale
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7725880887260184362, guid: 8453c9453cdd2474da65c4c4e716c5f3, type: 3}
@@ -1750,7 +1770,7 @@ RectTransform:
   m_GameObject: {fileID: 1627049569}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.28, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 14004661}
@@ -1758,7 +1778,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 622.9766, y: -398.78024}
+  m_AnchoredPosition: {x: 665, y: -519}
   m_SizeDelta: {x: 376.0728, y: 123.1732}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1627049571
@@ -1830,7 +1850,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.2603773, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1891,7 +1911,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -240.56349, y: -398.78}
+  m_AnchoredPosition: {x: -269, y: -529}
   m_SizeDelta: {x: 357.6543, y: 33.856}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2006297965
