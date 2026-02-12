@@ -5,6 +5,9 @@ using System.Collections.Generic;
 
 public class ChatManager : MonoBehaviour
 {
+    [Header("Chat Panel")]
+    public GameObject chatPanel;
+
     [Header("UI References")]
     public TMP_InputField chatInputField;
     public Button sendButton;
@@ -14,20 +17,36 @@ public class ChatManager : MonoBehaviour
     [Header("Settings")]
     public string playerName = "Player";
     public int maxMessages = 50;
+    public bool pauseGameplayWhenChatOpen = true;
 
     private List<GameObject> messageObjects = new List<GameObject>();
 
     void Start()
     {
-        // Add listeners
+        // Ensure chat is hidden at start
+        chatPanel.SetActive(false);
+
         sendButton.onClick.AddListener(SendMessage);
         chatInputField.onSubmit.AddListener(delegate { SendMessage(); });
     }
 
     void Update()
     {
-        // Send message with Enter key
-        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+        // Open chat (optional key, pwede mo alisin)
+        if (Input.GetKeyDown(KeyCode.C) && !chatPanel.activeSelf)
+        {
+            OpenChat();
+        }
+
+        // Close chat with ESC
+        if (chatPanel.activeSelf && Input.GetKeyDown(KeyCode.Escape))
+        {
+            CloseChat();
+        }
+
+        // Send message with Enter
+        if (chatPanel.activeSelf &&
+            (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)))
         {
             if (chatInputField.isFocused && !string.IsNullOrEmpty(chatInputField.text))
             {
@@ -36,6 +55,32 @@ public class ChatManager : MonoBehaviour
         }
     }
 
+    // ===============================
+    // CHAT OPEN / CLOSE
+    // ===============================
+
+    public void OpenChat()
+    {
+        chatPanel.SetActive(true);
+
+        if (pauseGameplayWhenChatOpen)
+            Time.timeScale = 0f;
+
+        chatInputField.ActivateInputField();
+    }
+
+    public void CloseChat()
+    {
+        chatPanel.SetActive(false);
+
+        if (pauseGameplayWhenChatOpen)
+            Time.timeScale = 1f;
+    }
+
+    // ===============================
+    // CHAT MESSAGE LOGIC
+    // ===============================
+
     public void SendMessage()
     {
         string message = chatInputField.text.Trim();
@@ -43,17 +88,14 @@ public class ChatManager : MonoBehaviour
         if (string.IsNullOrEmpty(message))
             return;
 
-        // Create the chat message
         AddMessage(playerName, message);
 
-        // Clear input field
         chatInputField.text = "";
         chatInputField.ActivateInputField();
     }
 
     public void AddMessage(string sender, string message)
     {
-        // Create new message object
         GameObject newMessage = Instantiate(chatMessagePrefab, chatContent);
         TMP_Text messageText = newMessage.GetComponentInChildren<TMP_Text>();
 
@@ -61,14 +103,12 @@ public class ChatManager : MonoBehaviour
 
         messageObjects.Add(newMessage);
 
-        // Limit message history
         if (messageObjects.Count > maxMessages)
         {
             Destroy(messageObjects[0]);
             messageObjects.RemoveAt(0);
         }
 
-        // Scroll to bottom
         Canvas.ForceUpdateCanvases();
         chatContent.GetComponentInParent<ScrollRect>().verticalNormalizedPosition = 0f;
     }
