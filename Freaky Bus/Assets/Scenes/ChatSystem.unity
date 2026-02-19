@@ -1875,7 +1875,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.00018310547, y: 0.0010986328}
+  m_AnchoredPosition: {x: -0.00024414062, y: 0.0010986328}
   m_SizeDelta: {x: 683.23, y: 384.32}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1539623228
@@ -1928,12 +1928,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5de5061f0a35c34f99ab0a531b37423, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChatManager
+  chatPanel: {fileID: 759457433}
   chatInputField: {fileID: 2006297965}
   sendButton: {fileID: 1627049571}
   chatContent: {fileID: 1142252212}
   chatMessagePrefab: {fileID: 1361655277}
   playerName: Player
   maxMessages: 50
+  pauseGameplayWhenChatOpen: 1
 --- !u!1 &1627049569
 GameObject:
   m_ObjectHideFlags: 0

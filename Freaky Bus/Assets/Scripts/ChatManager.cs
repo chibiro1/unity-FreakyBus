@@ -6,13 +6,17 @@ using System.Collections.Generic;
 public class ChatManager : MonoBehaviour
 {
     [Header("Chat Panel")]
-    public GameObject chatPanel;
+    public GameObject chatPanel;              // Active chat panel in scene
+    public GameObject chatPanelPrefab;       // Prefab to spawn if missing
 
     [Header("UI References")]
     public TMP_InputField chatInputField;
     public Button sendButton;
     public Transform chatContent;
     public GameObject chatMessagePrefab;
+
+    [Header("Open Chat Button")]
+    public GameObject openChatButton;        // Button that opens chat
 
     [Header("Settings")]
     public string playerName = "Player";
@@ -23,28 +27,45 @@ public class ChatManager : MonoBehaviour
 
     void Start()
     {
-        // Ensure chat is hidden at start
+        // If no chat panel in scene, spawn from prefab
+        if (chatPanel == null)
+        {
+            if (chatPanelPrefab != null)
+            {
+                chatPanel = Instantiate(chatPanelPrefab);
+            }
+            else
+            {
+                Debug.LogError("Chat Panel Prefab is not assigned!");
+                return;
+            }
+        }
+
         chatPanel.SetActive(false);
 
         sendButton.onClick.AddListener(SendMessage);
         chatInputField.onSubmit.AddListener(delegate { SendMessage(); });
+
+        // Make sure open chat button is visible at start
+        if (openChatButton != null)
+            openChatButton.SetActive(true);
     }
 
     void Update()
     {
-        // Open chat (optional key, pwede mo alisin)
+        // Optional key open
         if (Input.GetKeyDown(KeyCode.C) && !chatPanel.activeSelf)
         {
             OpenChat();
         }
 
-        // Close chat with ESC
+        // Close with ESC
         if (chatPanel.activeSelf && Input.GetKeyDown(KeyCode.Escape))
         {
             CloseChat();
         }
 
-        // Send message with Enter
+        // Send with Enter
         if (chatPanel.activeSelf &&
             (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)))
         {
@@ -55,13 +76,13 @@ public class ChatManager : MonoBehaviour
         }
     }
 
-    // ===============================
-    // CHAT OPEN / CLOSE
-    // ===============================
-
     public void OpenChat()
     {
         chatPanel.SetActive(true);
+
+        // Hide open chat button
+        if (openChatButton != null)
+            openChatButton.SetActive(false);
 
         if (pauseGameplayWhenChatOpen)
             Time.timeScale = 0f;
@@ -72,6 +93,10 @@ public class ChatManager : MonoBehaviour
     public void CloseChat()
     {
         chatPanel.SetActive(false);
+
+        // Show open chat button again
+        if (openChatButton != null)
+            openChatButton.SetActive(true);
 
         if (pauseGameplayWhenChatOpen)
             Time.timeScale = 1f;
