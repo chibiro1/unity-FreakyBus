@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
+using Unity.Netcode;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(CapsuleCollider))]
-public class PlayerController : MonoBehaviour
+public class PlayerController : NetworkBehaviour
 {
     [Header("Movement Settings")]
     [SerializeField] private float moveSpeed = 5f;
@@ -45,6 +46,7 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded;
     private bool wasGrounded;
     private float jumpCooldownTimer;
+    private float jumpGroundGraceTimer;
     private float currentSpeed;
 
     private RaycastHit slopeHit;
@@ -53,9 +55,9 @@ public class PlayerController : MonoBehaviour
 
     private PlayerInputActions inputActions;
 
-    #region Unity Lifecycle
+    #region Netcode
 
-    private void Awake()
+    public override void OnNetworkSpawn()
     {
         rb = GetComponent<Rigidbody>();
         col = GetComponent<CapsuleCollider>();
@@ -67,10 +69,55 @@ public class PlayerController : MonoBehaviour
         rb.angularDamping = 0f;
 
         inputActions = new PlayerInputActions();
+
+        if (!IsOwner)
+        {
+            // Disable camera and input for non-owners
+            if (cameraController != null)
+                cameraController.enabled = false;
+
+            rb.isKinematic = true;
+            enabled = false;
+            return;
+        }
+
+        // Owner only — enable input
+        inputActions.Enable();
+        inputActions.Player.Move.performed += OnMove;
+        inputActions.Player.Move.canceled += OnMove;
+        inputActions.Player.Jump.performed += OnJump;
+
+        if (jumpButton != null)
+            jumpButton.onClick.AddListener(OnMobileJump);
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        if (!IsOwner) return;
+
+        inputActions.Disable();
+        inputActions.Player.Move.performed -= OnMove;
+        inputActions.Player.Move.canceled -= OnMove;
+        inputActions.Player.Jump.performed -= OnJump;
+
+        if (jumpButton != null)
+            jumpButton.onClick.RemoveListener(OnMobileJump);
+    }
+
+    #endregion
+
+    #region Unity Lifecycle
+
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody>();
+        col = GetComponent<CapsuleCollider>();
+        inputActions = new PlayerInputActions();
     }
 
     private void OnEnable()
     {
+        if (inputActions == null) return;
         inputActions.Enable();
         inputActions.Player.Move.performed += OnMove;
         inputActions.Player.Move.canceled += OnMove;
@@ -82,6 +129,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnDisable()
     {
+        if (inputActions == null) return;
         inputActions.Disable();
         inputActions.Player.Move.performed -= OnMove;
         inputActions.Player.Move.canceled -= OnMove;
@@ -93,6 +141,8 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        if (!IsOwner) return;
+
         CheckGround();
         SmoothInput();
         TickJumpCooldown();
@@ -101,6 +151,8 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!IsOwner) return;
+
         ApplyMovement();
         ApplyCustomGravity();
         HandleJump();
