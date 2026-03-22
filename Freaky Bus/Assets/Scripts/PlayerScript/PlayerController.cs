@@ -72,7 +72,6 @@ public class PlayerController : NetworkBehaviour
 
         if (!IsOwner)
         {
-            // Disable camera and input for non-owners
             if (cameraController != null)
                 cameraController.enabled = false;
 
@@ -81,7 +80,6 @@ public class PlayerController : NetworkBehaviour
             return;
         }
 
-        // Owner only — enable input
         inputActions.Enable();
         inputActions.Player.Move.performed += OnMove;
         inputActions.Player.Move.canceled += OnMove;
@@ -95,10 +93,12 @@ public class PlayerController : NetworkBehaviour
     {
         if (!IsOwner) return;
 
-        inputActions.Disable();
         inputActions.Player.Move.performed -= OnMove;
         inputActions.Player.Move.canceled -= OnMove;
         inputActions.Player.Jump.performed -= OnJump;
+        inputActions.Player.Disable();
+        inputActions.Disable();
+        inputActions.Dispose();
 
         if (jumpButton != null)
             jumpButton.onClick.RemoveListener(OnMobileJump);
@@ -115,29 +115,9 @@ public class PlayerController : NetworkBehaviour
         inputActions = new PlayerInputActions();
     }
 
-    private void OnEnable()
-    {
-        if (inputActions == null) return;
-        inputActions.Enable();
-        inputActions.Player.Move.performed += OnMove;
-        inputActions.Player.Move.canceled += OnMove;
-        inputActions.Player.Jump.performed += OnJump;
+    private void OnEnable() { }
 
-        if (jumpButton != null)
-            jumpButton.onClick.AddListener(OnMobileJump);
-    }
-
-    private void OnDisable()
-    {
-        if (inputActions == null) return;
-        inputActions.Disable();
-        inputActions.Player.Move.performed -= OnMove;
-        inputActions.Player.Move.canceled -= OnMove;
-        inputActions.Player.Jump.performed -= OnJump;
-
-        if (jumpButton != null)
-            jumpButton.onClick.RemoveListener(OnMobileJump);
-    }
+    private void OnDisable() { }
 
     private void Update()
     {

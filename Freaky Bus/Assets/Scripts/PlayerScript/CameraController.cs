@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using Unity.Netcode;
+using UnityEngine;
 
-public class CameraController : MonoBehaviour
+public class CameraController : NetworkBehaviour
 {
     [Header("Target")]
     [SerializeField] private Transform playerBody;
@@ -15,12 +16,11 @@ public class CameraController : MonoBehaviour
 
     [Header("Smoothing")]
     [SerializeField] private bool smoothLook = true;
-    [SerializeField] private float smoothSpeed = 25f;       // Increased for less lag
+    [SerializeField] private float smoothSpeed = 25f;
 
     [Header("Desktop Settings")]
     [SerializeField] private bool lockCursorOnPlay = true;
 
-    // ── Private State ──────────────────────────────────────────────
     private float pitchAngle;
     private float yawAngle;
     private float targetPitch;
@@ -29,11 +29,22 @@ public class CameraController : MonoBehaviour
     private int activeTouchId = -1;
     private Vector2 lastTouchPosition;
 
-    // ══════════════════════════════════════════════════════════════
-    #region Unity Lifecycle
+    private Camera cam;
 
-    private void Start()
+    #region Netcode
+
+    public override void OnNetworkSpawn()
     {
+        cam = GetComponent<Camera>();
+
+        if (!IsOwner)
+        {
+            // Disable camera for non-owners so only the local player sees through their own camera
+            if (cam != null) cam.enabled = false;
+            enabled = false;
+            return;
+        }
+
         if (playerBody != null)
             targetYaw = playerBody.eulerAngles.y;
 
@@ -41,25 +52,28 @@ public class CameraController : MonoBehaviour
             LockCursor();
     }
 
+    #endregion
+
+    #region Unity Lifecycle
+
     private void Update()
     {
-        // Only read input in Update — do NOT apply rotation here
+        if (!IsOwner) return;
+
         HandleDesktopInput();
         HandleMobileInput();
         HandleCursorLock();
     }
 
-    // KEY FIX: Apply rotation in LateUpdate, not Update
-    // This ensures camera moves AFTER the Rigidbody has been moved by FixedUpdate
-    // which is the main cause of stutter in first person controllers
     private void LateUpdate()
     {
+        if (!IsOwner) return;
+
         ApplyRotation();
     }
 
     #endregion
 
-    // ══════════════════════════════════════════════════════════════
     #region Desktop Input
 
     private void HandleDesktopInput()
@@ -87,7 +101,6 @@ public class CameraController : MonoBehaviour
 
     #endregion
 
-    // ══════════════════════════════════════════════════════════════
     #region Mobile Input
 
     private void HandleMobileInput()
@@ -100,8 +113,6 @@ public class CameraController : MonoBehaviour
 
         foreach (Touch touch in Input.touches)
         {
-            // Right half of screen = camera control
-            // Left half of screen = joystick
             bool isRightSide = touch.position.x > Screen.width * 0.5f;
             if (!isRightSide) continue;
 
@@ -128,14 +139,12 @@ public class CameraController : MonoBehaviour
 
     #endregion
 
-    // ══════════════════════════════════════════════════════════════
     #region Apply Rotation
 
     private void ApplyRotation()
     {
         if (smoothLook)
         {
-            // Use Time.deltaTime here since we're in LateUpdate
             pitchAngle = Mathf.LerpAngle(pitchAngle, targetPitch, smoothSpeed * Time.deltaTime);
             yawAngle = Mathf.LerpAngle(yawAngle, targetYaw, smoothSpeed * Time.deltaTime);
         }
@@ -145,17 +154,14 @@ public class CameraController : MonoBehaviour
             yawAngle = targetYaw;
         }
 
-        // Camera rotates vertically (up/down) — pitch only
         transform.localRotation = Quaternion.Euler(pitchAngle, 0f, 0f);
 
-        // Player body rotates horizontally (left/right) — yaw only
         if (playerBody != null)
             playerBody.rotation = Quaternion.Euler(0f, yawAngle, 0f);
     }
 
     #endregion
 
-    // ══════════════════════════════════════════════════════════════
     #region Cursor Helpers
 
     public void LockCursor()
@@ -172,7 +178,6 @@ public class CameraController : MonoBehaviour
 
     #endregion
 
-    // ══════════════════════════════════════════════════════════════
     #region Public API
 
     public float PitchAngle => pitchAngle;
