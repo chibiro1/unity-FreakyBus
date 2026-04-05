@@ -21,23 +21,16 @@ public class BusSeatManager : NetworkBehaviour
 
     private CameraController cachedCameraController;
     private NetworkObject seatedPlayerObject;
-
-    // Networked seated state — synced between server and client
-    private NetworkVariable<bool> isPlayerSeated = new NetworkVariable<bool>(
-        false,
-        NetworkVariableReadPermission.Everyone,
-        NetworkVariableWritePermission.Server
-    );
-
+    private bool isPlayerSeated;
     private bool isExiting;
 
-    // ── Update — keeps player glued to seat every frame ───────────
+    // ── Update — server only, glues player to seat ─────────────────
 
     private void Update()
     {
-        if (!isPlayerSeated.Value) return;
-        if (seatedPlayerObject == null) return;
         if (!IsServer) return;
+        if (!isPlayerSeated) return;
+        if (seatedPlayerObject == null) return;
 
         seatedPlayerObject.transform.position = driverSeat.position;
         seatedPlayerObject.transform.rotation = driverSeat.rotation;
@@ -65,7 +58,8 @@ public class BusSeatManager : NetworkBehaviour
         if (playerObject == null) return;
 
         seatedPlayerObject = playerObject;
-        isPlayerSeated.Value = true;
+        isPlayerSeated = true;
+        isExiting = false;
 
         busController.StartSteerDelay();
 
@@ -97,13 +91,9 @@ public class BusSeatManager : NetworkBehaviour
         localPlayer.transform.position = position;
         localPlayer.transform.rotation = rotation;
 
-        // Force camera to face driver seat forward direction
         if (cachedCameraController != null)
         {
-            cachedCameraController.SetLookDirection(
-                driverSeat.eulerAngles.y,
-                0f
-            );
+            cachedCameraController.SetLookDirection(driverSeat.eulerAngles.y, 0f);
             cachedCameraController.UnlockCursor();
         }
 
@@ -118,13 +108,7 @@ public class BusSeatManager : NetworkBehaviour
     {
         if (isExiting) return;
         isExiting = true;
-
-        // Stop update loop on BOTH client and server immediately
-        isPlayerSeated.Value = false;
-        seatedPlayerObject = null;
-
-        ulong localId = NetworkManager.Singleton.LocalClientId;
-        ExitDriverSeatServerRpc(localId);
+        ExitDriverSeatServerRpc(NetworkManager.Singleton.LocalClientId);
     }
 
     [Rpc(SendTo.Server, RequireOwnership = false)]
@@ -132,11 +116,10 @@ public class BusSeatManager : NetworkBehaviour
     {
         if (driverClientId != clientId) return;
 
-        driverClientId = ulong.MaxValue;
-
-        // Make absolutely sure seated state is cleared on server
-        isPlayerSeated.Value = false;
+        // Clear seated state on server immediately
+        isPlayerSeated = false;
         seatedPlayerObject = null;
+        driverClientId = ulong.MaxValue;
 
         if (!NetworkManager.Singleton.ConnectedClients.TryGetValue(clientId, out var client))
             return;

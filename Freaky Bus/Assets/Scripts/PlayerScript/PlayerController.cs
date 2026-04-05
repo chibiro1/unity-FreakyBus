@@ -32,7 +32,7 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private CameraController cameraController;
 
     [Header("Mobile UI")]
-    [SerializeField] private Joystick moveJoystick;
+    [SerializeField] private FixedJoystick moveJoystick;
     [SerializeField] private UnityEngine.UI.Button jumpButton;
 
     private Rigidbody rb;
@@ -82,11 +82,11 @@ public class PlayerController : NetworkBehaviour
 
         inputActions.Enable();
         inputActions.Player.Move.performed += OnMove;
-        inputActions.Player.Move.canceled += OnMove;
+        inputActions.Player.Move.canceled  += OnMove;
         inputActions.Player.Jump.performed += OnJump;
 
-        if (jumpButton != null)
-            jumpButton.onClick.AddListener(OnMobileJump);
+        // Use coroutine to find UI — retries until found
+        StartCoroutine(FindMobileUICoroutine());
     }
 
     public override void OnNetworkDespawn()
@@ -94,7 +94,7 @@ public class PlayerController : NetworkBehaviour
         if (!IsOwner) return;
 
         inputActions.Player.Move.performed -= OnMove;
-        inputActions.Player.Move.canceled -= OnMove;
+        inputActions.Player.Move.canceled  -= OnMove;
         inputActions.Player.Jump.performed -= OnJump;
         inputActions.Player.Disable();
         inputActions.Disable();
@@ -102,6 +102,39 @@ public class PlayerController : NetworkBehaviour
 
         if (jumpButton != null)
             jumpButton.onClick.RemoveListener(OnMobileJump);
+    }
+
+    #endregion
+
+    #region Mobile UI Finding
+
+    private System.Collections.IEnumerator FindMobileUICoroutine()
+    {
+        // Keep trying every frame until both references are found
+        while (moveJoystick == null || jumpButton == null)
+        {
+            if (moveJoystick == null)
+            {
+                GameObject joystickGO = GameObject.FindWithTag("JoystickUI");
+                if (joystickGO != null)
+                    moveJoystick = joystickGO.GetComponent<FixedJoystick>();
+            }
+
+            if (jumpButton == null)
+            {
+                GameObject jumpGO = GameObject.FindWithTag("JumpButtonUI");
+                if (jumpGO != null)
+                {
+                    jumpButton = jumpGO.GetComponent<UnityEngine.UI.Button>();
+                    if (jumpButton != null)
+                        jumpButton.onClick.AddListener(OnMobileJump);
+                }
+            }
+
+            yield return null;
+        }
+
+        Debug.Log("Mobile UI references found successfully!");
     }
 
     #endregion
@@ -221,6 +254,8 @@ public class PlayerController : NetworkBehaviour
 
     private void ApplyMovement()
     {
+        if (rb.isKinematic) return;
+
         Vector2 input = smoothedInput;
 
         float yaw = cameraController != null
@@ -229,7 +264,7 @@ public class PlayerController : NetworkBehaviour
 
         Quaternion yawRotation = Quaternion.Euler(0f, yaw, 0f);
         Vector3 forward = yawRotation * Vector3.forward;
-        Vector3 right = yawRotation * Vector3.right;
+        Vector3 right   = yawRotation * Vector3.right;
 
         Vector3 desiredDirection = (forward * input.y + right * input.x).normalized;
 
@@ -270,6 +305,8 @@ public class PlayerController : NetworkBehaviour
 
     private void HandleJump()
     {
+        if (rb.isKinematic) return;
+
         bool shouldJump = (jumpRequested && jumpBufferTimer > 0f) || mobileJumpPressed;
 
         if (shouldJump)
@@ -292,6 +329,7 @@ public class PlayerController : NetworkBehaviour
 
     private void ApplyCustomGravity()
     {
+        if (rb.isKinematic) return;
         if (isGrounded && rb.linearVelocity.y <= 0f) return;
 
         if (rb.linearVelocity.y < 0f)

@@ -1,6 +1,6 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
-
 
 public class BusInputHandler : MonoBehaviour
 {
@@ -28,38 +28,84 @@ public class BusInputHandler : MonoBehaviour
     public void EnableInput()
     {
         isInputEnabled = true;
+        inputActions = new BusInputActions();
         inputActions.Enable();
 
-        inputActions.Bus.Steer.performed    += OnSteer;
-        inputActions.Bus.Steer.canceled     += OnSteer;
-        inputActions.Bus.Throttle.performed += ctx => throttleHeld = true;
-        inputActions.Bus.Throttle.canceled  += ctx => throttleHeld = false;
-        inputActions.Bus.Brake.performed    += ctx => brakeHeld = true;
-        inputActions.Bus.Brake.canceled     += ctx => brakeHeld = false;
+        inputActions.Bus.Steer.performed       += OnSteer;
+        inputActions.Bus.Steer.canceled        += OnSteer;
+        inputActions.Bus.Throttle.performed    += ctx => throttleHeld = true;
+        inputActions.Bus.Throttle.canceled     += ctx => throttleHeld = false;
+        inputActions.Bus.Brake.performed       += ctx => brakeHeld = true;
+        inputActions.Bus.Brake.canceled        += ctx => brakeHeld = false;
         inputActions.Bus.ExitVehicle.performed += ctx => busSeatManager.ExitDriverSeat();
 
-        if (throttleButton != null)
+        // Use coroutine to find UI buttons — same approach as PlayerController
+        StartCoroutine(FindBusUICoroutine());
+    }
+
+    private IEnumerator FindBusUICoroutine()
+    {
+        // Keep retrying every frame until all references are found
+        while (throttleButton == null || brakeButton == null || exitSeatButton == null)
         {
-            var t = throttleButton.GetComponent<MobileHoldButton>();
-            if (t != null)
+            if (throttleButton == null)
             {
-                t.OnHoldStart += () => throttleHeld = true;
-                t.OnHoldEnd   += () => throttleHeld = false;
+                GameObject go = GameObject.FindWithTag("ThrottleButtonUI");
+                if (go != null)
+                {
+                    throttleButton = go.GetComponent<UnityEngine.UI.Button>();
+                    if (throttleButton != null)
+                    {
+                        var t = throttleButton.GetComponent<MobileHoldButton>();
+                        if (t != null)
+                        {
+                            t.OnHoldStart += () => throttleHeld = true;
+                            t.OnHoldEnd   += () => throttleHeld = false;
+                        }
+                    }
+                }
             }
+
+            if (brakeButton == null)
+            {
+                GameObject go = GameObject.FindWithTag("BrakeButtonUI");
+                if (go != null)
+                {
+                    brakeButton = go.GetComponent<UnityEngine.UI.Button>();
+                    if (brakeButton != null)
+                    {
+                        var b = brakeButton.GetComponent<MobileHoldButton>();
+                        if (b != null)
+                        {
+                            b.OnHoldStart += () => brakeHeld = true;
+                            b.OnHoldEnd   += () => brakeHeld = false;
+                        }
+                    }
+                }
+            }
+
+            if (exitSeatButton == null)
+            {
+                GameObject go = GameObject.FindWithTag("ExitSeatButtonUI");
+                if (go != null)
+                {
+                    exitSeatButton = go.GetComponent<UnityEngine.UI.Button>();
+                    if (exitSeatButton != null)
+                        exitSeatButton.onClick.AddListener(busSeatManager.ExitDriverSeat);
+                }
+            }
+
+            if (steeringWheelUI == null)
+            {
+                GameObject go = GameObject.FindWithTag("SteeringWheelUI");
+                if (go != null)
+                    steeringWheelUI = go.GetComponent<SteeringWheelUI>();
+            }
+
+            yield return null;
         }
 
-        if (brakeButton != null)
-        {
-            var b = brakeButton.GetComponent<MobileHoldButton>();
-            if (b != null)
-            {
-                b.OnHoldStart += () => brakeHeld = true;
-                b.OnHoldEnd   += () => brakeHeld = false;
-            }
-        }
-
-        if (exitSeatButton != null)
-            exitSeatButton.onClick.AddListener(busSeatManager.ExitDriverSeat);
+        Debug.Log("Bus UI references found successfully!");
     }
 
     public void DisableInput()
@@ -80,12 +126,17 @@ public class BusInputHandler : MonoBehaviour
         if (exitSeatButton != null)
             exitSeatButton.onClick.RemoveListener(busSeatManager.ExitDriverSeat);
 
+        // Clear references so coroutine finds fresh ones next time
+        throttleButton = null;
+        brakeButton = null;
+        exitSeatButton = null;
+        steeringWheelUI = null;
+
         busController.SetInputs(0f, 0f, false);
     }
 
     private void Update()
     {
-        // Guard — only run when input is enabled
         if (!isInputEnabled) return;
 
         float steer = steeringWheelUI != null
