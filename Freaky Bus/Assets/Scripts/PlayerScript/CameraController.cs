@@ -18,8 +18,9 @@ public class CameraController : NetworkBehaviour
     [SerializeField] private bool smoothLook = true;
     [SerializeField] private float smoothSpeed = 25f;
 
-    [Header("Desktop Settings")]
+    [Header("Cursor Settings")]
     [SerializeField] private bool lockCursorOnPlay = true;
+    [SerializeField] private KeyCode toggleCursorKey = KeyCode.K;
 
     private float pitchAngle;
     private float yawAngle;
@@ -28,7 +29,6 @@ public class CameraController : NetworkBehaviour
 
     private int activeTouchId = -1;
     private Vector2 lastTouchPosition;
-
     private Camera cam;
 
     #region Netcode
@@ -39,7 +39,6 @@ public class CameraController : NetworkBehaviour
 
         if (!IsOwner)
         {
-            // Disable camera for non-owners so only the local player sees through their own camera
             if (cam != null) cam.enabled = false;
             enabled = false;
             return;
@@ -62,13 +61,12 @@ public class CameraController : NetworkBehaviour
 
         HandleDesktopInput();
         HandleMobileInput();
-        HandleCursorLock();
+        HandleCursorToggle();
     }
 
     private void LateUpdate()
     {
         if (!IsOwner) return;
-
         ApplyRotation();
     }
 
@@ -85,18 +83,21 @@ public class CameraController : NetworkBehaviour
             Input.GetAxis("Mouse Y")
         );
 
-        targetYaw += mouseDelta.x * mouseSensitivity;
+        targetYaw   += mouseDelta.x * mouseSensitivity;
         targetPitch -= mouseDelta.y * mouseSensitivity;
-        targetPitch = Mathf.Clamp(targetPitch, minVerticalAngle, maxVerticalAngle);
+        targetPitch  = Mathf.Clamp(targetPitch, minVerticalAngle, maxVerticalAngle);
     }
 
-    private void HandleCursorLock()
+    private void HandleCursorToggle()
     {
-        if (Input.GetMouseButtonDown(0) && Cursor.lockState != CursorLockMode.Locked)
-            LockCursor();
-
-        if (Input.GetKeyDown(KeyCode.Escape))
-            UnlockCursor();
+        // Press K to toggle cursor lock on and off
+        if (Input.GetKeyDown(toggleCursorKey))
+        {
+            if (Cursor.lockState == CursorLockMode.Locked)
+                UnlockCursor();
+            else
+                LockCursor();
+        }
     }
 
     #endregion
@@ -126,9 +127,9 @@ public class CameraController : NetworkBehaviour
                 Vector2 delta = touch.position - lastTouchPosition;
                 lastTouchPosition = touch.position;
 
-                targetYaw += delta.x * touchSensitivity;
+                targetYaw   += delta.x * touchSensitivity;
                 targetPitch -= delta.y * touchSensitivity;
-                targetPitch = Mathf.Clamp(targetPitch, minVerticalAngle, maxVerticalAngle);
+                targetPitch  = Mathf.Clamp(targetPitch, minVerticalAngle, maxVerticalAngle);
             }
             else if (touch.phase == UnityEngine.TouchPhase.Ended && touch.fingerId == activeTouchId)
             {
@@ -146,12 +147,12 @@ public class CameraController : NetworkBehaviour
         if (smoothLook)
         {
             pitchAngle = Mathf.LerpAngle(pitchAngle, targetPitch, smoothSpeed * Time.deltaTime);
-            yawAngle = Mathf.LerpAngle(yawAngle, targetYaw, smoothSpeed * Time.deltaTime);
+            yawAngle   = Mathf.LerpAngle(yawAngle,   targetYaw,   smoothSpeed * Time.deltaTime);
         }
         else
         {
             pitchAngle = targetPitch;
-            yawAngle = targetYaw;
+            yawAngle   = targetYaw;
         }
 
         transform.localRotation = Quaternion.Euler(pitchAngle, 0f, 0f);
@@ -185,7 +186,7 @@ public class CameraController : NetworkBehaviour
 
     public void SetLookDirection(float yaw, float pitch)
     {
-        targetYaw = yaw;
+        targetYaw   = yaw;
         targetPitch = Mathf.Clamp(pitch, minVerticalAngle, maxVerticalAngle);
     }
 

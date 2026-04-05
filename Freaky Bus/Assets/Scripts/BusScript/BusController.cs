@@ -3,74 +3,116 @@ using UnityEngine;
 
 public class BusController : NetworkBehaviour
 {
-    [Header("Wheel Colliders")]
-    [SerializeField] private WheelCollider wheelFL;
-    [SerializeField] private WheelCollider wheelFR;
-    [SerializeField] private WheelCollider wheelRL;
-    [SerializeField] private WheelCollider wheelRR;
+    [Header("Direction")]
+    [SerializeField] private Transform forwardPivot;
 
     [Header("Bus Settings")]
-    [SerializeField] private float motorTorque = 1500f;
-    [SerializeField] private float brakeTorque = 3000f;
-    [SerializeField] private float maxSteerAngle = 30f;
+    [SerializeField] private float moveSpeed = 10f;
+    [SerializeField] private float turnSpeed = 50f;
+    [SerializeField] private float acceleration = 3f;
+    [SerializeField] private float deceleration = 5f;
     [SerializeField] private float maxSpeed = 20f;
+    [SerializeField] private float steerDelay = 1.5f;
 
     private Rigidbody rb;
+    private float currentSpeed;
     private float currentSteer;
     private float currentThrottle;
     private bool isBraking;
+    private float steerDelayTimer;
+    private bool steerReady;
+    private bool isInputEnabled;
 
-    public float CurrentSpeed => rb != null ? rb.linearVelocity.magnitude : 0f;
-    public bool IsStopped => CurrentSpeed < 0.1f;
+    public float CurrentSpeed => currentSpeed;
+    public bool IsStopped => Mathf.Abs(currentSpeed) < 0.5f;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        rb.centerOfMass = new Vector3(0f, -0.5f, 0f);
+    }
+
+    public void StartSteerDelay()
+    {
+        steerReady = false;
+        steerDelayTimer = steerDelay;
+        isInputEnabled = true;
+    }
+
+    public void StopInput()
+    {
+        isInputEnabled = false;
+        currentSteer = 0f;
+        currentThrottle = 0f;
+        isBraking = false;
     }
 
     private void FixedUpdate()
     {
         if (!IsServer) return;
 
-        HandleMotor();
+        HandleSteerDelay();
+        HandleMovement();
         HandleSteering();
+        HandleBraking();
     }
 
-    private void HandleMotor()
+    private void HandleSteerDelay()
     {
-        if (isBraking)
+        if (steerReady) return;
+        steerDelayTimer -= Time.fixedDeltaTime;
+        if (steerDelayTimer <= 0f)
+            steerReady = true;
+    }
+
+    private void HandleMovement()
+    {
+        if (!isInputEnabled)
         {
-            ApplyBrakes(brakeTorque);
-            return;
+            currentSpeed = Mathf.MoveTowards(currentSpeed, 0f, deceleration * Time.fixedDeltaTime);
         }
-
-        ApplyBrakes(0f);
-
-        if (CurrentSpeed < maxSpeed)
+        else if (isBraking)
         {
-            wheelRL.motorTorque = currentThrottle * motorTorque;
-            wheelRR.motorTorque = currentThrottle * motorTorque;
+            currentSpeed = Mathf.MoveTowards(currentSpeed, 0f, deceleration * 2f * Time.fixedDeltaTime);
         }
         else
         {
-            wheelRL.motorTorque = 0f;
-            wheelRR.motorTorque = 0f;
+            float targetSpeed = currentThrottle * maxSpeed;
+            currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, acceleration * Time.fixedDeltaTime);
         }
+
+        // Use ForwardPivot direction for movement
+        Vector3 forward = forwardPivot != null
+            ? forwardPivot.forward
+            : transform.forward;
+
+        rb.linearVelocity = new Vector3(
+            forward.x * currentSpeed,
+            rb.linearVelocity.y,
+            forward.z * currentSpeed
+        );
     }
 
     private void HandleSteering()
     {
-        float steerAngle = currentSteer * maxSteerAngle;
-        wheelFL.steerAngle = steerAngle;
-        wheelFR.steerAngle = steerAngle;
+        if (!steerReady || !isInputEnabled) return;
+        if (Mathf.Abs(currentSpeed) < 0.1f) return;
+
+        float turn = currentSteer * turnSpeed * Time.fixedDeltaTime;
+        Quaternion turnRotation = Quaternion.Euler(0f, turn, 0f);
+        rb.MoveRotation(rb.rotation * turnRotation);
     }
 
-    private void ApplyBrakes(float torque)
+    private void HandleBraking()
     {
-        wheelFL.brakeTorque = torque;
-        wheelFR.brakeTorque = torque;
-        wheelRL.brakeTorque = torque;
-        wheelRR.brakeTorque = torque;
+        if (isBraking || !isInputEnabled)
+        {
+            rb.linearVelocity = new Vector3(
+                rb.linearVelocity.x * 0.95f,
+                rb.linearVelocity.y,
+                rb.linearVelocity.z * 0.95f
+            );
+        }
     }
 
     public void SetInputs(float steer, float throttle, bool brake)
@@ -78,5 +120,12 @@ public class BusController : NetworkBehaviour
         currentSteer = steer;
         currentThrottle = throttle;
         isBraking = brake;
+    }
+
+    public void StopBus()
+    {
+        StopInput();
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
     }
 }
