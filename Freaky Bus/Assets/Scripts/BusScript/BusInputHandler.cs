@@ -91,6 +91,7 @@ public class BusInputHandler : MonoBehaviour
                 {
                     exitSeatButton = go.GetComponent<UnityEngine.UI.Button>();
                     if (exitSeatButton != null)
+                        exitSeatButton.onClick.RemoveAllListeners();
                         exitSeatButton.onClick.AddListener(busSeatManager.ExitDriverSeat);
                 }
             }

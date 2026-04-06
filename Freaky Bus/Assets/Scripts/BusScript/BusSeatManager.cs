@@ -24,29 +24,40 @@ public class BusSeatManager : NetworkBehaviour
     private bool isPlayerSeated;
     private bool isExiting;
 
-    // ── Update — server only, glues player to seat ─────────────────
+    
+    private float lastExitTime;
+    [SerializeField] private float exitCooldown = 1f;
 
-    private void Update()
+    public bool CanEnterSeat()
+    {
+        return Time.time - lastExitTime > exitCooldown;
+    }
+
+    private void LateUpdate()
     {
         if (!IsServer) return;
-        if (!isPlayerSeated) return;
+        if (!isPlayerSeated || driverClientId == ulong.MaxValue) return;
         if (seatedPlayerObject == null) return;
 
         seatedPlayerObject.transform.position = driverSeat.position;
         seatedPlayerObject.transform.rotation = driverSeat.rotation;
     }
 
-    // ── Sit in Driver Seat ─────────────────────────────────────────
+    // ── Sit ─────────────────────────────────────────
 
-    public void SitInDriverSeat(ulong clientId)
+    public void SitInDriverSeat()
     {
         if (IsDriverSeatTaken) return;
-        SitInDriverSeatServerRpc(clientId);
+        if (!CanEnterSeat()) return;
+
+        SitInDriverSeatServerRpc();
     }
 
-    [Rpc(SendTo.Server, RequireOwnership = false)]
-    private void SitInDriverSeatServerRpc(ulong clientId)
+    [ServerRpc(RequireOwnership = false)]
+    private void SitInDriverSeatServerRpc(ServerRpcParams rpcParams = default)
     {
+        ulong clientId = rpcParams.Receive.SenderClientId;
+
         if (IsDriverSeatTaken) return;
 
         driverClientId = clientId;
@@ -97,26 +108,29 @@ public class BusSeatManager : NetworkBehaviour
             cachedCameraController.UnlockCursor();
         }
 
-        busInputHandler.EnableInput();
         if (busDriverPanel != null) busDriverPanel.SetActive(true);
         if (playerPanel != null) playerPanel.SetActive(false);
+
+        busInputHandler.EnableInput();
     }
 
-    // ── Exit Driver Seat ───────────────────────────────────────────
+    // ── Exit ─────────────────────────────────────────
 
     public void ExitDriverSeat()
     {
         if (isExiting) return;
         isExiting = true;
-        ExitDriverSeatServerRpc(NetworkManager.Singleton.LocalClientId);
+
+        ExitDriverSeatServerRpc();
     }
 
-    [Rpc(SendTo.Server, RequireOwnership = false)]
-    private void ExitDriverSeatServerRpc(ulong clientId)
+    [ServerRpc(RequireOwnership = false)]
+    private void ExitDriverSeatServerRpc(ServerRpcParams rpcParams = default)
     {
+        ulong clientId = rpcParams.Receive.SenderClientId;
+
         if (driverClientId != clientId) return;
 
-        // Clear seated state on server immediately
         isPlayerSeated = false;
         seatedPlayerObject = null;
         driverClientId = ulong.MaxValue;
@@ -138,7 +152,8 @@ public class BusSeatManager : NetworkBehaviour
 
         busController.StopBus();
 
-        ExitSeatClientRpc(exitSeatPoint.position, clientId);
+        Vector3 exitPos = exitSeatPoint.position;
+        ExitSeatClientRpc(exitPos, clientId);
     }
 
     [Rpc(SendTo.ClientsAndHost)]
@@ -158,6 +173,9 @@ public class BusSeatManager : NetworkBehaviour
         cachedCameraController = null;
 
         isExiting = false;
+
+        
+        lastExitTime = Time.time;
 
         busInputHandler.DisableInput();
         if (busDriverPanel != null) busDriverPanel.SetActive(false);

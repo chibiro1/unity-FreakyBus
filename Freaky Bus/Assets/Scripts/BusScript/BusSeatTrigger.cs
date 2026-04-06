@@ -1,11 +1,6 @@
 using Unity.Netcode;
 using UnityEngine;
 
-/// <summary>
-/// Attach to DriverSeatTrigger child GO inside the Bus.
-/// Auto-sits the player when they enter the trigger near the driver seat.
-/// Requires a Collider with Is Trigger checked.
-/// </summary>
 public class BusSeatTrigger : MonoBehaviour
 {
     [SerializeField] private BusSeatManager busSeatManager;
@@ -19,6 +14,9 @@ public class BusSeatTrigger : MonoBehaviour
 
         if (busSeatManager.IsDriverSeatTaken) return;
 
-        busSeatManager.SitInDriverSeat(NetworkManager.Singleton.LocalClientId);
+       
+        if (!busSeatManager.CanEnterSeat()) return;
+
+        busSeatManager.SitInDriverSeat();
     }
 }

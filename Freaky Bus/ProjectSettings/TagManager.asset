@@ -6,8 +6,10 @@ TagManager:
   tags:
   - JoystickUI
   - JumpButtonUI
-  - ThrottleButton
-  - BrakeButton
+  - ThrottleButtonUI
+  - BrakeButtonUI
+  - ExitSeatButtonUI
+  - SteeringWheelUI
   layers:
   - Default
   - TransparentFX

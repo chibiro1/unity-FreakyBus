@@ -1830,7 +1830,6 @@ GameObject:
   - component: {fileID: 92246439}
   - component: {fileID: 92246441}
   - component: {fileID: 92246440}
-  - component: {fileID: 92246442}
   m_Layer: 5
   m_Name: BusDriverPanel
   m_TagString: Untagged
@@ -1851,6 +1850,9 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 957846431}
+  - {fileID: 209699452}
+  - {fileID: 1526603275}
+  - {fileID: 1992420590}
   - {fileID: 1313962760}
   m_Father: {fileID: 121128777}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1873,14 +1875,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 0}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -1897,18 +1899,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 92246438}
   m_CullTransparentMesh: 1
---- !u!114 &92246442
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 92246438}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c185d242eeacac4180909a8a3e9674c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MobileHoldButton
 --- !u!1001 &93281278
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4228,9 +4218,10 @@ GameObject:
   - component: {fileID: 209699455}
   - component: {fileID: 209699454}
   - component: {fileID: 209699453}
+  - component: {fileID: 209699456}
   m_Layer: 5
   m_Name: Throttle
-  m_TagString: ThrottleButton
+  m_TagString: ThrottleButtonUI
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4242,13 +4233,13 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 209699451}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2.0725, y: 2.0725, z: 2.0725}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1965096631}
-  m_Father: {fileID: 1313962760}
+  m_Father: {fileID: 92246439}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
@@ -4337,6 +4328,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 209699451}
   m_CullTransparentMesh: 1
+--- !u!114 &209699456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 209699451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c185d242eeacac4180909a8a3e9674c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MobileHoldButton
 --- !u!1 &231841467 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 14627ff84c0669a4c85cd41073ad21cb, type: 3}
@@ -5908,10 +5911,10 @@ GameObject:
   - component: {fileID: 300149885}
   - component: {fileID: 300149886}
   - component: {fileID: 300149887}
-  - component: {fileID: 300149888}
   - component: {fileID: 300149889}
   - component: {fileID: 300149891}
   - component: {fileID: 300149890}
+  - component: {fileID: 300149892}
   m_Layer: 0
   m_Name: Bus
   m_TagString: Untagged
@@ -5928,7 +5931,7 @@ Transform:
   m_GameObject: {fileID: 300149884}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 95.71, y: 6.8, z: 426.7}
+  m_LocalPosition: {x: 95.71, y: 4.95, z: 426.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5937,9 +5940,9 @@ Transform:
   - {fileID: 1602257475}
   - {fileID: 1951622172}
   - {fileID: 421122238}
+  - {fileID: 951388077}
   - {fileID: 687095443}
   - {fileID: 748997035}
-  - {fileID: 951388077}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!54 &300149886
@@ -5950,7 +5953,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 300149884}
   serializedVersion: 5
-  m_Mass: 1500
+  m_Mass: 2000
   m_LinearDamping: 5
   m_AngularDamping: 10
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -5966,7 +5969,7 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 80
   m_CollisionDetection: 2
 --- !u!114 &300149887
@@ -5994,52 +5997,6 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
---- !u!114 &300149888
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 300149884}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 03df53472c666154092fc11c113d6560, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ClientNetworkTransform
-  ShowTopMostFoldoutHeaderGroup: 1
-  NetworkTransformExpanded: 1
-  AutoOwnerAuthorityTickOffset: 1
-  PositionInterpolationType: 0
-  RotationInterpolationType: 0
-  ScaleInterpolationType: 0
-  PositionLerpSmoothing: 1
-  PositionMaxInterpolationTime: 0.1
-  RotationLerpSmoothing: 1
-  RotationMaxInterpolationTime: 0.1
-  ScaleLerpSmoothing: 1
-  ScaleMaxInterpolationTime: 0.1
-  AuthorityMode: 0
-  TickSyncChildren: 0
-  UseUnreliableDeltas: 0
-  SyncPositionX: 1
-  SyncPositionY: 1
-  SyncPositionZ: 1
-  SyncRotAngleX: 1
-  SyncRotAngleY: 1
-  SyncRotAngleZ: 1
-  SyncScaleX: 0
-  SyncScaleY: 0
-  SyncScaleZ: 0
-  PositionThreshold: 0.001
-  RotAngleThreshold: 0.01
-  ScaleThreshold: 0.01
-  UseQuaternionSynchronization: 0
-  UseQuaternionCompression: 0
-  UseHalfFloatPrecision: 0
-  InLocalSpace: 0
-  SwitchTransformSpaceWhenParented: 0
-  Interpolate: 1
-  SlerpPosition: 0
 --- !u!114 &300149889
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6059,6 +6016,7 @@ MonoBehaviour:
   busInputHandler: {fileID: 300149890}
   busDriverPanel: {fileID: 92246438}
   playerPanel: {fileID: 1180023187}
+  exitCooldown: 1
 --- !u!114 &300149890
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6097,6 +6055,52 @@ MonoBehaviour:
   deceleration: 5
   maxSpeed: 15
   steerDelay: 2
+--- !u!114 &300149892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 300149884}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.Components.NetworkTransform
+  ShowTopMostFoldoutHeaderGroup: 1
+  NetworkTransformExpanded: 0
+  AutoOwnerAuthorityTickOffset: 1
+  PositionInterpolationType: 0
+  RotationInterpolationType: 0
+  ScaleInterpolationType: 0
+  PositionLerpSmoothing: 1
+  PositionMaxInterpolationTime: 0.1
+  RotationLerpSmoothing: 1
+  RotationMaxInterpolationTime: 0.1
+  ScaleLerpSmoothing: 1
+  ScaleMaxInterpolationTime: 0.1
+  AuthorityMode: 0
+  TickSyncChildren: 0
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 0
+  SyncScaleY: 0
+  SyncScaleZ: 0
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  SwitchTransformSpaceWhenParented: 0
+  Interpolate: 1
+  SlerpPosition: 0
 --- !u!1 &300828016
 GameObject:
   m_ObjectHideFlags: 0
@@ -14133,8 +14137,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.102621816, y: 0.09806061, z: 0.10546708}
-  m_Center: {x: -0.036861967, y: -0.016975658, z: -0.7204704}
+  m_Size: {x: 0.08665962, y: 0.06661973, z: 0.04423758}
+  m_Center: {x: -0.028880866, y: -0.018440029, z: -0.6898557}
 --- !u!114 &687095445
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15546,7 +15550,7 @@ Transform:
   m_GameObject: {fileID: 748997034}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 9.23, y: 3.55, z: -12.517}
+  m_LocalPosition: {x: 9.23, y: 3.71, z: -12.517}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -18094,7 +18098,7 @@ Transform:
   m_GameObject: {fileID: 951388076}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 6.57, y: 3.76, z: -11.19}
+  m_LocalPosition: {x: 6.48, y: 3.76, z: -11.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -23138,7 +23142,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1180023188}
-  - component: {fileID: 1180023189}
   m_Layer: 5
   m_Name: PlayerPanel
   m_TagString: Untagged
@@ -23167,14 +23170,6 @@ RectTransform:
   m_AnchoredPosition: {x: -12.236877, y: -325.99435}
   m_SizeDelta: {x: 1619.5262, y: 260.0113}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &1180023189
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1180023187}
-  m_CullTransparentMesh: 1
 --- !u!1001 &1182278143
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -26735,7 +26730,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1313962760}
-  - component: {fileID: 1313962761}
   m_Layer: 5
   m_Name: ActionButtonsPanel
   m_TagString: Untagged
@@ -26754,10 +26748,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 209699452}
-  - {fileID: 1526603275}
-  - {fileID: 1992420590}
+  m_Children: []
   m_Father: {fileID: 92246439}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -26765,14 +26756,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &1313962761
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1313962759}
-  m_CullTransparentMesh: 1
 --- !u!1 &1325115156 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -3704563456361051248, guid: 031603faa2ed721488049b5586bf5c98, type: 3}
@@ -30492,9 +30475,10 @@ GameObject:
   - component: {fileID: 1526603278}
   - component: {fileID: 1526603277}
   - component: {fileID: 1526603276}
+  - component: {fileID: 1526603279}
   m_Layer: 5
   m_Name: Brake
-  m_TagString: BrakeButton
+  m_TagString: BrakeButtonUI
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -30506,13 +30490,13 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1526603274}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2.0725, y: 2.0725, z: 2.0725}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2016566393}
-  m_Father: {fileID: 1313962760}
+  m_Father: {fileID: 92246439}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -30601,6 +30585,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1526603274}
   m_CullTransparentMesh: 1
+--- !u!114 &1526603279
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1526603274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c185d242eeacac4180909a8a3e9674c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MobileHoldButton
 --- !u!1001 &1530645582
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -40440,7 +40436,7 @@ GameObject:
   - component: {fileID: 1992420591}
   m_Layer: 5
   m_Name: Exit
-  m_TagString: Untagged
+  m_TagString: ExitSeatButtonUI
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -40452,13 +40448,13 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1992420589}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2.0725, y: 2.0725, z: 2.0725}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 501629674}
-  m_Father: {fileID: 1313962760}
+  m_Father: {fileID: 92246439}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
@@ -41884,7 +41880,7 @@ GameObject:
   - component: {fileID: 2062392957}
   m_Layer: 5
   m_Name: SteerWheelImage
-  m_TagString: Untagged
+  m_TagString: SteeringWheelUI
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
