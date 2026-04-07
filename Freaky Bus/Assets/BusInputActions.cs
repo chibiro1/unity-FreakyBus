@@ -127,6 +127,15 @@ public partial class @BusInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Reverse"",
+                    ""type"": ""Button"",
+                    ""id"": ""4fb2ea34-1931-4b12-b999-2b78c91f15b4"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -239,6 +248,28 @@ public partial class @BusInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""ExitVehicle"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cbc38ea5-2df3-4e18-9811-af3d3e257175"",
+                    ""path"": ""<Keyboard>/v"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Reverse"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3a9c59e0-4bea-4e2d-ae7b-7354dccd58d1"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Reverse"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -251,6 +282,7 @@ public partial class @BusInputActions: IInputActionCollection2, IDisposable
         m_Bus_Throttle = m_Bus.FindAction("Throttle", throwIfNotFound: true);
         m_Bus_Brake = m_Bus.FindAction("Brake", throwIfNotFound: true);
         m_Bus_ExitVehicle = m_Bus.FindAction("ExitVehicle", throwIfNotFound: true);
+        m_Bus_Reverse = m_Bus.FindAction("Reverse", throwIfNotFound: true);
     }
 
     ~@BusInputActions()
@@ -335,6 +367,7 @@ public partial class @BusInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Bus_Throttle;
     private readonly InputAction m_Bus_Brake;
     private readonly InputAction m_Bus_ExitVehicle;
+    private readonly InputAction m_Bus_Reverse;
     /// <summary>
     /// Provides access to input actions defined in input action map "Bus".
     /// </summary>
@@ -362,6 +395,10 @@ public partial class @BusInputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Bus/ExitVehicle".
         /// </summary>
         public InputAction @ExitVehicle => m_Wrapper.m_Bus_ExitVehicle;
+        /// <summary>
+        /// Provides access to the underlying input action "Bus/Reverse".
+        /// </summary>
+        public InputAction @Reverse => m_Wrapper.m_Bus_Reverse;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -400,6 +437,9 @@ public partial class @BusInputActions: IInputActionCollection2, IDisposable
             @ExitVehicle.started += instance.OnExitVehicle;
             @ExitVehicle.performed += instance.OnExitVehicle;
             @ExitVehicle.canceled += instance.OnExitVehicle;
+            @Reverse.started += instance.OnReverse;
+            @Reverse.performed += instance.OnReverse;
+            @Reverse.canceled += instance.OnReverse;
         }
 
         /// <summary>
@@ -423,6 +463,9 @@ public partial class @BusInputActions: IInputActionCollection2, IDisposable
             @ExitVehicle.started -= instance.OnExitVehicle;
             @ExitVehicle.performed -= instance.OnExitVehicle;
             @ExitVehicle.canceled -= instance.OnExitVehicle;
+            @Reverse.started -= instance.OnReverse;
+            @Reverse.performed -= instance.OnReverse;
+            @Reverse.canceled -= instance.OnReverse;
         }
 
         /// <summary>
@@ -491,5 +534,12 @@ public partial class @BusInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnExitVehicle(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Reverse" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnReverse(InputAction.CallbackContext context);
     }
 }

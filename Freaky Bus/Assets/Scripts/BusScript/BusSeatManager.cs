@@ -24,32 +24,22 @@ public class BusSeatManager : NetworkBehaviour
     private bool isPlayerSeated;
     private bool isExiting;
 
-    
     private float lastExitTime;
     [SerializeField] private float exitCooldown = 1f;
 
-    public bool CanEnterSeat()
-    {
-        return Time.time - lastExitTime > exitCooldown;
-    }
+    public bool CanEnterSeat() => Time.time - lastExitTime > exitCooldown;
 
     private void LateUpdate()
     {
-        if (!IsServer) return;
-        if (!isPlayerSeated || driverClientId == ulong.MaxValue) return;
-        if (seatedPlayerObject == null) return;
+        if (!IsServer || !isPlayerSeated || driverClientId == ulong.MaxValue || seatedPlayerObject == null) return;
 
         seatedPlayerObject.transform.position = driverSeat.position;
         seatedPlayerObject.transform.rotation = driverSeat.rotation;
     }
 
-    // ── Sit ─────────────────────────────────────────
-
     public void SitInDriverSeat()
     {
-        if (IsDriverSeatTaken) return;
-        if (!CanEnterSeat()) return;
-
+        if (IsDriverSeatTaken || !CanEnterSeat()) return;
         SitInDriverSeatServerRpc();
     }
 
@@ -57,13 +47,10 @@ public class BusSeatManager : NetworkBehaviour
     private void SitInDriverSeatServerRpc(ServerRpcParams rpcParams = default)
     {
         ulong clientId = rpcParams.Receive.SenderClientId;
-
         if (IsDriverSeatTaken) return;
 
         driverClientId = clientId;
-
-        if (!NetworkManager.Singleton.ConnectedClients.TryGetValue(clientId, out var client))
-            return;
+        if (!NetworkManager.Singleton.ConnectedClients.TryGetValue(clientId, out var client)) return;
 
         NetworkObject playerObject = client.PlayerObject;
         if (playerObject == null) return;
@@ -74,14 +61,10 @@ public class BusSeatManager : NetworkBehaviour
 
         busController.StartSteerDelay();
 
-        CapsuleCollider col = playerObject.GetComponent<CapsuleCollider>();
-        if (col != null) col.enabled = false;
-
-        Rigidbody playerRb = playerObject.GetComponent<Rigidbody>();
-        if (playerRb != null) playerRb.isKinematic = true;
-
-        PlayerController pc = playerObject.GetComponent<PlayerController>();
-        if (pc != null) pc.enabled = false;
+        // Disable Player Physics/Logic
+        if (playerObject.TryGetComponent<CapsuleCollider>(out var col)) col.enabled = false;
+        if (playerObject.TryGetComponent<Rigidbody>(out var rb)) rb.isKinematic = true;
+        if (playerObject.TryGetComponent<PlayerController>(out var pc)) pc.enabled = false;
 
         TeleportToSeatClientRpc(driverSeat.position, driverSeat.rotation, clientId);
     }
@@ -94,10 +77,13 @@ public class BusSeatManager : NetworkBehaviour
         NetworkObject localPlayer = NetworkManager.Singleton.LocalClient.PlayerObject;
         if (localPlayer == null) return;
 
-        cachedCameraController = localPlayer.GetComponentInChildren<CameraController>();
+        // 1. ACTIVATE UI IMMEDIATELY so InputHandler can find references
+        if (busDriverPanel != null) busDriverPanel.SetActive(true);
+        if (playerPanel != null) playerPanel.SetActive(false);
 
-        ClientNetworkTransform cnt = localPlayer.GetComponent<ClientNetworkTransform>();
-        if (cnt != null) cnt.enabled = false;
+        // 2. Handle Camera/Transform
+        cachedCameraController = localPlayer.GetComponentInChildren<CameraController>();
+        if (localPlayer.TryGetComponent<ClientNetworkTransform>(out var cnt)) cnt.enabled = false;
 
         localPlayer.transform.position = position;
         localPlayer.transform.rotation = rotation;
@@ -108,19 +94,14 @@ public class BusSeatManager : NetworkBehaviour
             cachedCameraController.UnlockCursor();
         }
 
-        if (busDriverPanel != null) busDriverPanel.SetActive(true);
-        if (playerPanel != null) playerPanel.SetActive(false);
-
+        // 3. ENABLE INPUT (Now that UI is active)
         busInputHandler.EnableInput();
     }
-
-    // ── Exit ─────────────────────────────────────────
 
     public void ExitDriverSeat()
     {
         if (isExiting) return;
         isExiting = true;
-
         ExitDriverSeatServerRpc();
     }
 
@@ -128,32 +109,23 @@ public class BusSeatManager : NetworkBehaviour
     private void ExitDriverSeatServerRpc(ServerRpcParams rpcParams = default)
     {
         ulong clientId = rpcParams.Receive.SenderClientId;
-
         if (driverClientId != clientId) return;
 
         isPlayerSeated = false;
         seatedPlayerObject = null;
         driverClientId = ulong.MaxValue;
 
-        if (!NetworkManager.Singleton.ConnectedClients.TryGetValue(clientId, out var client))
-            return;
+        if (!NetworkManager.Singleton.ConnectedClients.TryGetValue(clientId, out var client)) return;
 
         NetworkObject playerObject = client.PlayerObject;
         if (playerObject == null) return;
 
-        CapsuleCollider col = playerObject.GetComponent<CapsuleCollider>();
-        if (col != null) col.enabled = true;
-
-        Rigidbody playerRb = playerObject.GetComponent<Rigidbody>();
-        if (playerRb != null) playerRb.isKinematic = false;
-
-        PlayerController pc = playerObject.GetComponent<PlayerController>();
-        if (pc != null) pc.enabled = true;
+        if (playerObject.TryGetComponent<CapsuleCollider>(out var col)) col.enabled = true;
+        if (playerObject.TryGetComponent<Rigidbody>(out var rb)) rb.isKinematic = false;
+        if (playerObject.TryGetComponent<PlayerController>(out var pc)) pc.enabled = true;
 
         busController.StopBus();
-
-        Vector3 exitPos = exitSeatPoint.position;
-        ExitSeatClientRpc(exitPos, clientId);
+        ExitSeatClientRpc(exitSeatPoint.position, clientId);
     }
 
     [Rpc(SendTo.ClientsAndHost)]
@@ -164,17 +136,13 @@ public class BusSeatManager : NetworkBehaviour
         NetworkObject localPlayer = NetworkManager.Singleton.LocalClient.PlayerObject;
         if (localPlayer == null) return;
 
-        ClientNetworkTransform cnt = localPlayer.GetComponent<ClientNetworkTransform>();
-        if (cnt != null) cnt.enabled = true;
-
+        if (localPlayer.TryGetComponent<ClientNetworkTransform>(out var cnt)) cnt.enabled = true;
         localPlayer.transform.position = exitPosition;
 
         if (cachedCameraController != null) cachedCameraController.LockCursor();
         cachedCameraController = null;
 
         isExiting = false;
-
-        
         lastExitTime = Time.time;
 
         busInputHandler.DisableInput();

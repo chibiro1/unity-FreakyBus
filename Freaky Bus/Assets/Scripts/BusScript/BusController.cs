@@ -11,7 +11,12 @@ public class BusController : NetworkBehaviour
     [SerializeField] private float turnSpeed = 50f;
     [SerializeField] private float acceleration = 3f;
     [SerializeField] private float deceleration = 5f;
-    [SerializeField] private float maxSpeed = 20f;
+    
+    [Header("Speed Limits")]
+    [SerializeField] private float maxForwardSpeed = 20f;
+    [SerializeField] private float maxReverseSpeed = 6f; // Capped for realism
+    
+    [Header("Mechanics")]
     [SerializeField] private float steerDelay = 1.5f;
 
     private Rigidbody rb;
@@ -49,6 +54,7 @@ public class BusController : NetworkBehaviour
 
     private void FixedUpdate()
     {
+        // Physics and movement are purely Server-Authoritative
         if (!IsServer) return;
 
         HandleSteerDelay();
@@ -77,14 +83,14 @@ public class BusController : NetworkBehaviour
         }
         else
         {
-            float targetSpeed = currentThrottle * maxSpeed;
+            // Assign the correct speed limit based on whether we are moving forward or backward
+            float activeMaxSpeed = currentThrottle < 0f ? maxReverseSpeed : maxForwardSpeed;
+            float targetSpeed = currentThrottle * activeMaxSpeed;
+            
             currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, acceleration * Time.fixedDeltaTime);
         }
 
-        // Use ForwardPivot direction for movement
-        Vector3 forward = forwardPivot != null
-            ? forwardPivot.forward
-            : transform.forward;
+        Vector3 forward = forwardPivot != null ? forwardPivot.forward : transform.forward;
 
         rb.linearVelocity = new Vector3(
             forward.x * currentSpeed,
@@ -96,9 +102,15 @@ public class BusController : NetworkBehaviour
     private void HandleSteering()
     {
         if (!steerReady || !isInputEnabled) return;
+        
+        // Prevent steering on the spot
         if (Mathf.Abs(currentSpeed) < 0.1f) return;
 
-        float turn = currentSteer * turnSpeed * Time.fixedDeltaTime;
+        // CRITICAL FIX: If we are going in reverse, we must invert the visual steering calculation
+        // so the back of the bus swings in the direction of the steering wheel.
+        float directionMultiplier = currentSpeed < -0.1f ? -1f : 1f;
+
+        float turn = currentSteer * turnSpeed * directionMultiplier * Time.fixedDeltaTime;
         Quaternion turnRotation = Quaternion.Euler(0f, turn, 0f);
         rb.MoveRotation(rb.rotation * turnRotation);
     }
@@ -115,7 +127,30 @@ public class BusController : NetworkBehaviour
         }
     }
 
+    // ── Input Synchronization ───────────────────────────────────────
+
+    // The client calls this method locally from BusInputHandler
     public void SetInputs(float steer, float throttle, bool brake)
+    {
+        if (IsServer)
+        {
+            // If the Host is driving, apply directly
+            ApplyInputs(steer, throttle, brake);
+        }
+        else
+        {
+            // If a Client is driving, forward the inputs to the server
+            SetInputsServerRpc(steer, throttle, brake);
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SetInputsServerRpc(float steer, float throttle, bool brake)
+    {
+        ApplyInputs(steer, throttle, brake);
+    }
+
+    private void ApplyInputs(float steer, float throttle, bool brake)
     {
         currentSteer = steer;
         currentThrottle = throttle;
