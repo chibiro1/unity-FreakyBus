@@ -11,6 +11,7 @@ TagManager:
   - ExitSeatButtonUI
   - SteeringWheelUI
   - ReverseButtonUI
+  - Bus
   layers:
   - Default
   - TransparentFX
