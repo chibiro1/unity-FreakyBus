@@ -48,5 +48,8 @@ public class PassengerAI : MonoBehaviour
         targetSeat = seat;
         isBoarding = true;
         isSeated = false;
+
+        // Make the passenger a child of the bus so they move with it
+        transform.SetParent(seat.root);
     }
 }
