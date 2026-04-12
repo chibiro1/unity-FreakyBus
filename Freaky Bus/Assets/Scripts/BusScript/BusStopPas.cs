@@ -16,17 +16,18 @@ public class BusStopPas : MonoBehaviour
         passengers.Remove(p);
     }
 
-    private void OnTriggerEnter(Collider other)
+    public void TryBoardBus(PassengerSeatManager bus, BusDoorWayManager doors)
     {
-        PassengerSeatManager bus = other.GetComponentInParent<PassengerSeatManager>();
-        BusDoorWayManager doors = other.GetComponentInParent<BusDoorWayManager>();
-
-        if (bus == null || doors == null) return;
+        Debug.Log($"[{name}] Boarding passengers: {passengers.Count}");
 
         foreach (PassengerAI p in passengers)
         {
             if (p == null) continue;
             if (bus.IsFull()) break;
+
+            // 🔥 prevent bugs
+            if (p.IsSeated) continue;
+            if (p.IsBoarding) continue;
 
             Transform seat = bus.GetAvailableSeat();
             if (seat != null)

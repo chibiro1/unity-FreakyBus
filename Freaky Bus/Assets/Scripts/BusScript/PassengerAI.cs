@@ -6,11 +6,10 @@ public class PassengerAI : MonoBehaviour
     [Header("Movement")]
     public float walkSpeed = 2f;
 
-    [Header("Fare UI (MUST BE CHILD OF PREFAB)")]
+    [Header("Fare UI")]
     public GameObject fareIndicator;
 
     private Animator animator;
-
     private Transform targetSeat;
     private Transform targetDoor;
 
@@ -19,7 +18,7 @@ public class PassengerAI : MonoBehaviour
     private bool hasPaid;
 
     public bool IsSeated => isSeated;
-    public bool HasPaid => hasPaid;
+    public bool IsBoarding => isBoarding;
 
     void Awake()
     {
@@ -29,15 +28,18 @@ public class PassengerAI : MonoBehaviour
             fareIndicator.SetActive(false);
     }
 
+    void Start()
+    {
+        // 🔥 IMPORTANT: register to correct bus stop
+        GetComponentInParent<BusStopPas>()?.RegisterPassenger(this);
+    }
+
     void Update()
     {
         if (isBoarding && !isSeated && targetDoor != null)
         {
             MoveToDoor();
         }
-
-        // 🔥 IMPORTANT: keeps UI always correct (fixes stuck indicator)
-        RefreshFareUI();
     }
 
     // =========================
@@ -48,21 +50,28 @@ public class PassengerAI : MonoBehaviour
         Vector3 dir = targetDoor.position - transform.position;
         dir.y = 0f;
 
-        if (dir.magnitude > 0.05f)
+        float distance = dir.magnitude;
+
+        if (distance > 0.1f)
         {
             transform.rotation = Quaternion.LookRotation(dir);
             transform.position += dir.normalized * walkSpeed * Time.deltaTime;
 
             animator.SetBool("isWalking", true);
-            animator.SetBool("isSeated", false);
+        }
+        else
+        {
+            Sit();
         }
     }
 
     // =========================
-    // BOARD BUS
+    // BOARD
     // =========================
     public void BoardBus(Transform seat, Transform doorA, Transform doorB)
     {
+        if (isBoarding || isSeated) return;
+
         targetSeat = seat;
 
         float distA = Vector3.Distance(seat.position, doorA.position);
@@ -87,15 +96,16 @@ public class PassengerAI : MonoBehaviour
 
         transform.position = targetSeat.position;
         transform.rotation = targetSeat.rotation * Quaternion.Euler(0, 180f, 0);
-
-        transform.SetParent(targetSeat.root);
+        transform.SetParent(targetSeat);
 
         animator.SetBool("isWalking", false);
         animator.SetBool("isSeated", true);
+
+        UpdateUI();
     }
 
     // =========================
-    // PAYMENT (called externally)
+    // PAYMENT
     // =========================
     public void PayFare()
     {
@@ -104,29 +114,36 @@ public class PassengerAI : MonoBehaviour
         hasPaid = true;
 
         Debug.Log($"{name} Fare Paid");
+
+        UpdateUI();
     }
 
     // =========================
-    // UI CONTROL (AUTO SYNC)
+    // UI
     // =========================
-    void RefreshFareUI()
+    void UpdateUI()
     {
         if (fareIndicator == null) return;
 
-        bool shouldShow = isSeated && !hasPaid;
-
-        if (fareIndicator.activeSelf != shouldShow)
-            fareIndicator.SetActive(shouldShow);
+        fareIndicator.SetActive(isSeated && !hasPaid);
     }
 
     // =========================
-    // DOOR TRIGGER
+    // CLICK
+    // =========================
+    void OnMouseDown()
+    {
+        PayFare();
+    }
+
+    // =========================
+    // DOOR TRIGGER (backup)
     // =========================
     void OnTriggerEnter(Collider other)
     {
         if (!isBoarding || isSeated) return;
 
-        if (other.transform == targetDoor)
+        if (other.GetComponentInParent<BusDoorWayManager>() != null)
         {
             Sit();
         }
