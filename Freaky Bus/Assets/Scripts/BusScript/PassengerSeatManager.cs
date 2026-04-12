@@ -3,30 +3,28 @@ using System.Collections.Generic;
 
 public class PassengerSeatManager : MonoBehaviour
 {
-    [Header("Seats")]
     public Transform[] seats;
 
     private List<Transform> availableSeats = new List<Transform>();
 
     void Awake()
     {
-        // Add all seats to the available list
-        foreach (Transform seat in seats)
-            availableSeats.Add(seat);
+        foreach (Transform s in seats)
+        {
+            if (s != null)
+                availableSeats.Add(s);
+        }
     }
 
     public Transform GetAvailableSeat()
     {
         if (availableSeats.Count == 0) return null;
 
-        // Pick a completely random seat from whatever is left
-        int randomIndex = Random.Range(0, availableSeats.Count);
-        Transform chosenSeat = availableSeats[randomIndex];
+        int index = Random.Range(0, availableSeats.Count);
+        Transform seat = availableSeats[index];
 
-        // Remove it so no one else takes it
-        availableSeats.RemoveAt(randomIndex);
-
-        return chosenSeat;
+        availableSeats.RemoveAt(index);
+        return seat;
     }
 
     public bool IsFull()

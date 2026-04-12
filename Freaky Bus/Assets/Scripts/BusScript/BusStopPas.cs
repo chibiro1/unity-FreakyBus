@@ -1,37 +1,38 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 
 public class BusStopPas : MonoBehaviour
 {
     private List<PassengerAI> passengers = new List<PassengerAI>();
 
-    public void RegisterPassenger(PassengerAI passenger)
+    public void RegisterPassenger(PassengerAI p)
     {
-        passengers.Add(passenger);
-        Debug.Log("Passenger registered: " + passengers.Count + " total.");
+        if (!passengers.Contains(p))
+            passengers.Add(p);
     }
 
-    public void OnBusEnter(Collider other)
+    public void UnregisterPassenger(PassengerAI p)
     {
-        Debug.Log("OnBusEnter called by: " + other.gameObject.name);
+        passengers.Remove(p);
+    }
 
+    private void OnTriggerEnter(Collider other)
+    {
         PassengerSeatManager bus = other.GetComponentInParent<PassengerSeatManager>();
-        if (bus == null)
-        {
-            Debug.Log("No SeatManager found on: " + other.gameObject.name);
-            return;
-        }
+        BusDoorWayManager doors = other.GetComponentInParent<BusDoorWayManager>();
 
-        Debug.Log("Bus found! Passengers to board: " + passengers.Count);
+        if (bus == null || doors == null) return;
 
-        foreach (PassengerAI passenger in passengers)
+        foreach (PassengerAI p in passengers)
         {
-            if (passenger == null) continue;
+            if (p == null) continue;
             if (bus.IsFull()) break;
 
             Transform seat = bus.GetAvailableSeat();
             if (seat != null)
-                passenger.BoardBus(seat);
+            {
+                p.BoardBus(seat, doors.doorA, doors.doorB);
+            }
         }
     }
 }

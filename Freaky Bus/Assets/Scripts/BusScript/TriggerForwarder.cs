@@ -16,8 +16,20 @@ public class TriggerForwarder : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log("TriggerForwarder hit by: " + other.gameObject.name);
-        if (busStop != null)
-            busStop.OnBusEnter(other);
+        PassengerSeatManager bus = other.GetComponentInParent<PassengerSeatManager>();
+
+        if (bus == null) return;
+
+        PassengerAI[] nearbyPassengers = FindObjectsOfType<PassengerAI>();
+
+        foreach (var p in nearbyPassengers)
+        {
+            if (bus.IsFull()) break;
+
+            Transform seat = bus.GetAvailableSeat();
+            if (seat != null)
+                p.BoardBus(seat, bus.GetComponent<BusDoorWayManager>().doorA,
+                                  bus.GetComponent<BusDoorWayManager>().doorB);
+        }
     }
 }
