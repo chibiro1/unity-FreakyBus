@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1871125362992997150
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4089356786619106815}
+  m_Layer: 0
+  m_Name: Passenger Spawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4089356786619106815
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1871125362992997150}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 26.800657, y: 1.942006, z: 21.490814}
+  m_LocalScale: {x: 7.1926155, y: 7.1926155, z: 7.1926155}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3094903950192745714}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7816608875858587590
 GameObject:
   m_ObjectHideFlags: 0
@@ -52,8 +83,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 172.29805, y: 108.41417, z: 153.99152}
-  m_Center: {x: 23.982222, y: 51.324047, z: 104.36931}
+  m_Size: {x: 172.29805, y: 108.41417, z: 252.59804}
+  m_Center: {x: 23.982222, y: 51.324047, z: 153.67258}
 --- !u!114 &4558254109978341908
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -96,7 +127,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f755b67437c4b0e408e5804d0e3bc07d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -139.6
+      value: -145.96
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f755b67437c4b0e408e5804d0e3bc07d, type: 3}
       propertyPath: m_LocalRotation.w
@@ -136,6 +167,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: f755b67437c4b0e408e5804d0e3bc07d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4514260695744868109}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: f755b67437c4b0e408e5804d0e3bc07d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4089356786619106815}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f755b67437c4b0e408e5804d0e3bc07d, type: 3}
       insertIndex: -1
@@ -180,9 +214,9 @@ MonoBehaviour:
   - {fileID: 1109202945998690857, guid: dfff7e4784984b84eac82986cd2f2be7, type: 3}
   - {fileID: 5963178970481099773, guid: 8f0344d3e0ea8304d9d490db7b23146b, type: 3}
   - {fileID: 1035755821395824510, guid: 5273fd265ebf4584982ccedf2283e166, type: 3}
-  spawnPoint: {fileID: 0}
-  scatterRadius: 3.5
-  spawnCount: 5
+  spawnPoint: {fileID: 4089356786619106815}
+  scatterRadius: 5
+  spawnCount: 4
 --- !u!4 &3094903950192745714 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: f755b67437c4b0e408e5804d0e3bc07d, type: 3}
