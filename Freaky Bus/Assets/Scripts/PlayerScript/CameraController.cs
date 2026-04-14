@@ -44,6 +44,8 @@ public class CameraController : NetworkBehaviour
             return;
         }
 
+        cam.cullingMask &= ~(1 << LayerMask.NameToLayer("Minimap Indicator"));
+
         if (playerBody != null)
             targetYaw = playerBody.eulerAngles.y;
 

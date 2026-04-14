@@ -12,6 +12,7 @@ TagManager:
   - SteeringWheelUI
   - ReverseButtonUI
   - Bus
+  - GasStation
   layers:
   - Default
   - TransparentFX
@@ -22,7 +23,7 @@ TagManager:
   - 
   - 
   - Ground
-  - 
+  - Minimap Indicator
   - 
   - 
   - 

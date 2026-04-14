@@ -19,6 +19,9 @@ public class BusController : NetworkBehaviour
     [Header("Mechanics")]
     [SerializeField] private float steerDelay = 1.5f;
 
+    // FUEL Consumption 
+    FuelSystem fuelSystem;
+
     private Rigidbody rb;
     private float currentSpeed;
     private float currentSteer;
@@ -30,11 +33,13 @@ public class BusController : NetworkBehaviour
 
     public float CurrentSpeed => currentSpeed;
     public bool IsStopped => Mathf.Abs(currentSpeed) < 0.5f;
-
+  
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
         rb.centerOfMass = new Vector3(0f, -0.5f, 0f);
+
+        fuelSystem = GetComponent<FuelSystem>();
     }
 
     public void StartSteerDelay()
@@ -61,6 +66,7 @@ public class BusController : NetworkBehaviour
         HandleMovement();
         HandleSteering();
         HandleBraking();
+
     }
 
     private void HandleSteerDelay()
@@ -72,7 +78,15 @@ public class BusController : NetworkBehaviour
     }
 
     private void HandleMovement()
+
     {
+        if (fuelSystem.currentFuel <= 0f && !IsStopped)
+        {
+            currentThrottle = 0f;
+            isInputEnabled = false; 
+        }
+
+
         if (!isInputEnabled)
         {
             currentSpeed = Mathf.MoveTowards(currentSpeed, 0f, deceleration * Time.fixedDeltaTime);
@@ -97,6 +111,14 @@ public class BusController : NetworkBehaviour
             rb.linearVelocity.y,
             forward.z * currentSpeed
         );
+
+        // Fuel Decress when push button 
+
+        if (fuelSystem.currentFuel > 0f)
+        {
+            fuelSystem.fuelConsumptionRate = currentSpeed * 0.01f;
+            fuelSystem.ReduceFuel();
+        }
     }
 
     private void HandleSteering()
