@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 959180324093083673}
   - component: {fileID: 61976578216409326}
   - component: {fileID: 7552464336754091844}
-  - component: {fileID: 5967208640534685403}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -142,27 +141,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!65 &5967208640534685403
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2346085586048257819}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &188825451686949423
 PrefabInstance:
   m_ObjectHideFlags: 0

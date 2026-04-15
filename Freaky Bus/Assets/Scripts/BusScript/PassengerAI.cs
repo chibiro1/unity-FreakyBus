@@ -12,6 +12,7 @@ public class PassengerAI : MonoBehaviour
     private Animator animator;
     private Transform targetSeat;
     private Transform targetDoor;
+    private float seatTime;
 
     private bool isBoarding;
     private bool isSeated;
@@ -19,6 +20,7 @@ public class PassengerAI : MonoBehaviour
 
     public bool IsSeated => isSeated;
     public bool IsBoarding => isBoarding;
+    public bool CanPay => isSeated && hasPaid == false && Time.time - seatTime > 0.2f;
 
     void Awake()
     {
@@ -100,6 +102,9 @@ public class PassengerAI : MonoBehaviour
 
         animator.SetBool("isWalking", false);
         animator.SetBool("isSeated", true);
+        seatTime = Time.time;
+
+        Debug.Log($"{name} is now SEATED"); 
 
         UpdateUI();
     }
@@ -109,11 +114,16 @@ public class PassengerAI : MonoBehaviour
     // =========================
     public void PayFare()
     {
-        if (!isSeated || hasPaid) return;
+        if (!CanPay) return;
 
         hasPaid = true;
 
         Debug.Log($"{name} Fare Paid");
+
+        if (MoneyManager.Instance != null)
+        {
+            MoneyManager.Instance.AddMoney(20);
+        }
 
         UpdateUI();
     }
@@ -131,10 +141,7 @@ public class PassengerAI : MonoBehaviour
     // =========================
     // CLICK
     // =========================
-    void OnMouseDown()
-    {
-        PayFare();
-    }
+
 
     // =========================
     // DOOR TRIGGER (backup)

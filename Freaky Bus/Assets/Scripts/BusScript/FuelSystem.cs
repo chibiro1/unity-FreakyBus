@@ -8,6 +8,7 @@ public class FuelSystem : MonoBehaviour
 {
     public float startFuel;
     public float maxFuel = 100f;
+    public int refuelCost = 300;
     public float fuelConsumptionRate;
     public Slider fuelIndicatorSId;
     public TMP_Text fuelIndicatorTxt;
@@ -36,7 +37,19 @@ public class FuelSystem : MonoBehaviour
     // Call this from the UI Button OnClick()
     public void OnRefuelButtonPressed()
     {
+        if (MoneyManager.Instance == null) return;
+
+        if (MoneyManager.Instance.money < refuelCost)
+        {
+            Debug.Log("Not enough money to refuel!");
+            return;
+        }
+
+        MoneyManager.Instance.RemoveMoney(refuelCost);
+
         isRefueling = true;
+
+        Debug.Log("Refueling started (-300)");
     }
 
     public void ReduceFuel()
