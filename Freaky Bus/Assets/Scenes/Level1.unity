@@ -921,6 +921,37 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
+--- !u!1 &22028695
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 22028696}
+  m_Layer: 0
+  m_Name: Passenger Spawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &22028696
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 22028695}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 143.14, y: 0.07, z: 418.87}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &22285066
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1844,29 +1875,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6072134938926715551, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
-      propertyPath: m_Size.z
-      value: 270.77188
-      objectReference: {fileID: 0}
-    - target: {fileID: 6072134938926715551, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
-      propertyPath: m_Center.x
-      value: 23.982437
-      objectReference: {fileID: 0}
-    - target: {fileID: 6072134938926715551, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
-      propertyPath: m_Center.y
-      value: 51.324158
-      objectReference: {fileID: 0}
-    - target: {fileID: 6072134938926715551, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
-      propertyPath: m_Center.z
-      value: 162.75945
-      objectReference: {fileID: 0}
     - target: {fileID: 9207148573663339121, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
       propertyPath: spawnCount
       value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 9207148573663339121, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
-      propertyPath: scatterRadius
-      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -15035,10 +15046,6 @@ PrefabInstance:
     - target: {fileID: 9207148573663339121, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
       propertyPath: spawnCount
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9207148573663339121, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
-      propertyPath: scatterRadius
-      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -36586,21 +36593,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6072134938926715551, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
-      propertyPath: m_Size.z
-      value: 268.3973
-      objectReference: {fileID: 0}
-    - target: {fileID: 6072134938926715551, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
-      propertyPath: m_Center.z
-      value: 161.5722
-      objectReference: {fileID: 0}
     - target: {fileID: 9207148573663339121, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
       propertyPath: spawnCount
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 9207148573663339121, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
       propertyPath: scatterRadius
-      value: 4
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -37433,11 +37432,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9207148573663339121, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
       propertyPath: spawnCount
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 9207148573663339121, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
-      propertyPath: scatterRadius
-      value: 5
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -49064,6 +49059,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9207148573663339121, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
+      propertyPath: spawnCount
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 9207148573663339121, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
+      propertyPath: spawnPoint
+      value: 
+      objectReference: {fileID: 22028696}
+    - target: {fileID: 9207148573663339121, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
+      propertyPath: scatterRadius
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -49086,6 +49093,7 @@ SceneRoots:
   - {fileID: 521547780}
   - {fileID: 1882992337}
   - {fileID: 625886029}
+  - {fileID: 22028696}
   - {fileID: 2053029311}
   - {fileID: 1619927528}
   - {fileID: 1646623091}
