@@ -16,10 +16,18 @@ public class TriggerForwarding : MonoBehaviour
 
         if (bus == null || doors == null) return;
 
+        // =========================
+        // BOARDING (your existing system)
+        // =========================
         if (busStop != null)
         {
             Debug.Log("BUS ARRIVED AT STOP: " + busStop.name);
             busStop.TryBoardBus(bus, doors);
         }
+
+        // =========================
+        // DROP EXECUTION (NEW)
+        // =========================
+        bus.ExecuteDrop();
     }
 }

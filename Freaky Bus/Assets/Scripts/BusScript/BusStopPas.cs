@@ -16,24 +16,50 @@ public class BusStopPas : MonoBehaviour
         passengers.Remove(p);
     }
 
+    public int CurrentPassengerCount()
+    {
+        return passengers.Count;
+    }
+
     public void TryBoardBus(PassengerSeatManager bus, BusDoorWayManager doors)
     {
-        Debug.Log($"[{name}] Boarding passengers: {passengers.Count}");
-
-        foreach (PassengerAI p in passengers)
+        foreach (PassengerAI p in passengers.ToArray())
         {
             if (p == null) continue;
             if (bus.IsFull()) break;
 
-            // 🔥 prevent bugs
-            if (p.IsSeated) continue;
-            if (p.IsBoarding) continue;
+            if (p.IsSeated || p.IsBoarding) continue;
 
             Transform seat = bus.GetAvailableSeat();
             if (seat != null)
             {
                 p.BoardBus(seat, doors.doorA, doors.doorB);
             }
+        }
+    }
+
+    // =========================
+    // 🔥 DROP OFF SYSTEM (NEW)
+    // =========================
+    public void OnBusArrived(PassengerSeatManager bus)
+    {
+        if (bus.onboardPassengers.Count == 0)
+            return;
+
+        int dropCount = Random.Range(1, bus.onboardPassengers.Count + 1);
+
+        for (int i = 0; i < dropCount; i++)
+        {
+            if (bus.onboardPassengers.Count == 0)
+                break;
+
+            int index = Random.Range(0, bus.onboardPassengers.Count);
+
+            PassengerAI p = bus.onboardPassengers[index];
+
+            bus.onboardPassengers.RemoveAt(index);
+
+            p.InstantDropOff();
         }
     }
 }

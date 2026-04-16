@@ -18,9 +18,12 @@ public class PassengerAI : MonoBehaviour
     private bool isSeated;
     private bool hasPaid;
 
+    private BusStopPas busStop;
+    private PassengerSeatManager busManager;
+
     public bool IsSeated => isSeated;
     public bool IsBoarding => isBoarding;
-    public bool CanPay => isSeated && hasPaid == false && Time.time - seatTime > 0.2f;
+    public bool CanPay => isSeated && !hasPaid && Time.time - seatTime > 0.2f;
 
     void Awake()
     {
@@ -30,10 +33,10 @@ public class PassengerAI : MonoBehaviour
             fareIndicator.SetActive(false);
     }
 
-    void Start()
+    public void SetBusStop(BusStopPas stop)
     {
-        // 🔥 IMPORTANT: register to correct bus stop
-        GetComponentInParent<BusStopPas>()?.RegisterPassenger(this);
+        busStop = stop;
+        busStop?.RegisterPassenger(this);
     }
 
     void Update()
@@ -44,17 +47,12 @@ public class PassengerAI : MonoBehaviour
         }
     }
 
-    // =========================
-    // MOVE
-    // =========================
     void MoveToDoor()
     {
         Vector3 dir = targetDoor.position - transform.position;
         dir.y = 0f;
 
-        float distance = dir.magnitude;
-
-        if (distance > 0.1f)
+        if (dir.magnitude > 0.1f)
         {
             transform.rotation = Quaternion.LookRotation(dir);
             transform.position += dir.normalized * walkSpeed * Time.deltaTime;
@@ -84,11 +82,10 @@ public class PassengerAI : MonoBehaviour
         isBoarding = true;
         isSeated = false;
         hasPaid = false;
+
+        busStop?.UnregisterPassenger(this);
     }
 
-    // =========================
-    // SIT
-    // =========================
     void Sit()
     {
         if (targetSeat == null) return;
@@ -102,50 +99,55 @@ public class PassengerAI : MonoBehaviour
 
         animator.SetBool("isWalking", false);
         animator.SetBool("isSeated", true);
+
         seatTime = Time.time;
 
-        Debug.Log($"{name} is now SEATED"); 
+        // 🔥 NEW: register onboard
+        busManager = FindFirstObjectByType<PassengerSeatManager>();
 
-        UpdateUI();
-    }
-
-    // =========================
-    // PAYMENT
-    // =========================
-    public void PayFare()
-    {
-        if (!CanPay) return;
-
-        hasPaid = true;
-
-        Debug.Log($"{name} Fare Paid");
-
-        if (MoneyManager.Instance != null)
+        if (busManager != null)
         {
-            MoneyManager.Instance.AddMoney(20);
+            busManager.RegisterOnboard(this);
         }
 
         UpdateUI();
     }
 
     // =========================
-    // UI
+    // 🔥 DROP OFF (NEW)
     // =========================
-    void UpdateUI()
+    public void InstantDropOff()
     {
-        if (fareIndicator == null) return;
+        if (busManager != null)
+            busManager.RemoveOnboard(this);
 
-        fareIndicator.SetActive(isSeated && !hasPaid);
+        Destroy(gameObject);
     }
 
-    // =========================
-    // CLICK
-    // =========================
+    public void PayFare()
+    {
+        if (!CanPay) return;
 
+        hasPaid = true;
 
-    // =========================
-    // DOOR TRIGGER (backup)
-    // =========================
+        if (MoneyManager.Instance != null)
+            MoneyManager.Instance.AddMoney(20);
+
+        UpdateUI();
+    }
+
+    void UpdateUI()
+    {
+        if (fareIndicator != null)
+            fareIndicator.SetActive(isSeated && !hasPaid);
+    }
+
+    void OnDestroy()
+    {
+        if (busStop != null)
+            busStop.UnregisterPassenger(this);
+    }
+
     void OnTriggerEnter(Collider other)
     {
         if (!isBoarding || isSeated) return;

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 public class PassengerSpawner : MonoBehaviour
 {
@@ -6,13 +7,18 @@ public class PassengerSpawner : MonoBehaviour
     public Transform spawnPoint;
 
     public float scatterRadius = 1.5f;
-    public int spawnCount = 2;
+
+    public int minSpawn = 1;
+    public int maxSpawn = 5;
+
+    public float minCooldown = 180f;
+    public float maxCooldown = 680f;
+
+    private BusStopPas busStop;
 
     void Start()
     {
-        BusStopPas busStop = GetComponent<BusStopPas>();
-        if (busStop == null)
-            busStop = GetComponentInParent<BusStopPas>();
+        busStop = GetComponent<BusStopPas>() ?? GetComponentInParent<BusStopPas>();
 
         if (busStop == null)
         {
@@ -20,28 +26,56 @@ public class PassengerSpawner : MonoBehaviour
             return;
         }
 
-        for (int i = 0; i < spawnCount; i++)
+        StartCoroutine(SpawnLoop());
+    }
+
+    IEnumerator SpawnLoop()
+    {
+        bool firstWave = true;
+
+        while (true)
         {
-            int index = Random.Range(0, passengerPrefabs.Length);
-
-            Vector3 basePos = spawnPoint ? spawnPoint.position : transform.position;
-            Quaternion rot = spawnPoint ? spawnPoint.rotation : transform.rotation;
-
-            Vector2 rand = Random.insideUnitCircle * scatterRadius;
-            Vector3 pos = basePos + new Vector3(rand.x, 0, rand.y);
-
-            GameObject obj = Instantiate(passengerPrefabs[index], pos, rot);
-
-            PassengerAI ai = obj.GetComponent<PassengerAI>();
-
-            if (ai == null)
+            // 🔥 Only wait for empty AFTER first wave
+            if (!firstWave)
             {
-                Debug.LogWarning("Missing PassengerAI!");
-                continue;
+                yield return new WaitUntil(() => busStop.CurrentPassengerCount() == 0);
+
+                float cooldown = Random.Range(minCooldown, maxCooldown);
+                yield return new WaitForSeconds(cooldown);
             }
 
-            // 🔥 CRITICAL FIX
-            busStop.RegisterPassenger(ai);
+            int spawnCount = Random.Range(minSpawn, maxSpawn + 1);
+
+            for (int i = 0; i < spawnCount; i++)
+            {
+                SpawnPassenger();
+            }
+
+            firstWave = false;
         }
+    }
+
+    void SpawnPassenger()
+    {
+        int index = Random.Range(0, passengerPrefabs.Length);
+
+        Vector3 basePos = spawnPoint ? spawnPoint.position : transform.position;
+        Quaternion rot = spawnPoint ? spawnPoint.rotation : transform.rotation;
+
+        Vector2 rand = Random.insideUnitCircle * scatterRadius;
+        Vector3 pos = basePos + new Vector3(rand.x, 0, rand.y);
+
+        GameObject obj = Instantiate(passengerPrefabs[index], pos, rot);
+
+        PassengerAI ai = obj.GetComponent<PassengerAI>();
+
+        if (ai == null)
+        {
+            Debug.LogWarning("Missing PassengerAI!");
+            return;
+        }
+
+        // 🔥 proper registration
+        ai.SetBusStop(busStop);
     }
 }
