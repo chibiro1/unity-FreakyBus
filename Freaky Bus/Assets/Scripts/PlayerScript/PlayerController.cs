@@ -49,7 +49,6 @@ public class PlayerController : NetworkBehaviour
     private bool isGrounded;
     private bool wasGrounded;
     private float jumpCooldownTimer;
-    private float jumpGroundGraceTimer;
     private float currentSpeed;
 
     private RaycastHit slopeHit;
@@ -77,43 +76,78 @@ public class PlayerController : NetworkBehaviour
             return;
         }
 
-        inputActions = new PlayerInputActions();
+        // 1. Setup Input Actions immediately
+        if (inputActions == null) inputActions = new PlayerInputActions();
+        inputActions.Enable();
+        inputActions.Player.Move.performed += OnMove;
+        inputActions.Player.Move.canceled  += OnMove;
+        inputActions.Player.Jump.performed += OnJump;
+
+        // 2. Subscribe to Scene Events
+        if (NetworkManager.Singleton.SceneManager != null)
+        {
+            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += OnSceneLoaded;
+        }
+
+        // 3. Logic Gate: If already in Gameplay scene (Late Joiner/Host), spawn UI now.
+        string currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        string targetScene = NetworkManagerSetup.Instance.CurrentGameplaySceneName;
+
+        if (currentScene == targetScene)
+        {
+            SpawnPlayerUI();
+        }
+    }
+
+    private void OnSceneLoaded(string sceneName, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode, System.Collections.Generic.List<ulong> clientsCompleted, System.Collections.Generic.List<ulong> clientsTimedOut)
+    {
+        if (sceneName == NetworkManagerSetup.Instance.CurrentGameplaySceneName)
+        {
+            SpawnPlayerUI();
+        }
+    }
+
+    private void SpawnPlayerUI()
+    {
+        if (localUI != null) return; // Prevent double-spawning
 
         if (uiPrefab != null)
         {
-            // Find existing Canvas in scene to parent UI under
-            // This ensures GraphicRaycaster and EventSystem work correctly
-            Canvas sceneCanvas = Object.FindFirstObjectByType<Canvas>();
-
-            GameObject uiInstance = sceneCanvas != null
-                ? Instantiate(uiPrefab, sceneCanvas.transform)
-                : Instantiate(uiPrefab);
-
+            GameObject uiInstance = Instantiate(uiPrefab);
             localUI = uiInstance.GetComponent<PlayerUIReferences>();
 
             if (localUI != null)
             {
                 moveJoystick = localUI.moveJoystick;
-                jumpButton    = localUI.jumpButton;
+                jumpButton   = localUI.jumpButton;
 
                 if (jumpButton != null)
+                {
+                    jumpButton.onClick.RemoveAllListeners();
                     jumpButton.onClick.AddListener(OnMobileJump);
+                }
+                
+                // Ensure correct default states
+                if (localUI.playerPanel != null) localUI.playerPanel.SetActive(true);
+                if (localUI.busDriverPanel != null) localUI.busDriverPanel.SetActive(false);
+                
+                Debug.Log("Gameplay UI Spawned and Linked successfully.");
             }
             else
             {
                 Debug.LogError("UI Prefab is missing PlayerUIReferences component!");
             }
         }
-
-        inputActions.Enable();
-        inputActions.Player.Move.performed += OnMove;
-        inputActions.Player.Move.canceled  += OnMove;
-        inputActions.Player.Jump.performed += OnJump;
     }
 
     public override void OnNetworkDespawn()
     {
         if (!IsOwner) return;
+
+        if (NetworkManager.Singleton != null && NetworkManager.Singleton.SceneManager != null)
+        {
+            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -= OnSceneLoaded;
+        }
 
         if (localUI != null) Destroy(localUI.gameObject);
 
@@ -187,7 +221,7 @@ public class PlayerController : NetworkBehaviour
     private void SmoothInput()
     {
         Vector2 rawInput = moveInput;
-        if (moveJoystick != null)
+        if (moveJoystick != null && moveJoystick.gameObject.activeInHierarchy)
         {
             Vector2 joyInput = new Vector2(moveJoystick.Horizontal, moveJoystick.Vertical);
             if (joyInput.magnitude > rawInput.magnitude)

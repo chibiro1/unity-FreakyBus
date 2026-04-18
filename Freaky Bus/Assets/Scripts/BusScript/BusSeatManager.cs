@@ -13,8 +13,8 @@ public class BusSeatManager : NetworkBehaviour
     [SerializeField] private BusInputHandler busInputHandler;
     [SerializeField] private FuelSystem fuelSystem;
 
-    [Header("Bus UI")]
-    [SerializeField] private GameObject busDriverPanel;
+    // NOTE: Removed [SerializeField] private GameObject busDriverPanel; 
+    // We now use the Player's UI instead.
 
     private ulong driverClientId = ulong.MaxValue;
     public bool IsDriverSeatTaken => driverClientId != ulong.MaxValue;
@@ -26,9 +26,6 @@ public class BusSeatManager : NetworkBehaviour
 
     private float lastExitTime;
     [SerializeField] private float exitCooldown = 1f;
-
-    // Cache the player's local UI so we can show/hide it correctly
-    private GameObject cachedPlayerUI;
 
     public bool CanEnterSeat() => Time.time - lastExitTime > exitCooldown;
 
@@ -79,24 +76,24 @@ public class BusSeatManager : NetworkBehaviour
         NetworkObject localPlayer = NetworkManager.Singleton.LocalClient.PlayerObject;
         if (localPlayer == null) return;
 
-        // Get the player's instantiated UI and hide it
-        // Use LocalUI from PlayerController instead of a scene reference
+        // 1. Toggle the Player's UI panels
         PlayerController pc = localPlayer.GetComponent<PlayerController>();
         if (pc != null && pc.LocalUI != null)
         {
-            cachedPlayerUI = pc.LocalUI.gameObject;
-            cachedPlayerUI.SetActive(false);
+            if (pc.LocalUI.playerPanel != null) pc.LocalUI.playerPanel.SetActive(false);
+            if (pc.LocalUI.busDriverPanel != null) pc.LocalUI.busDriverPanel.SetActive(true);
+        }
+        else
+        {
+            Debug.LogError("BusSeatManager: Could not find Player's LocalUI!");
         }
 
-        // Show bus driver panel
-        if (busDriverPanel != null) busDriverPanel.SetActive(true);
-
-        // Link fuel system UI
+        // 2. Link fuel system UI
         BusUIReferences ui = Object.FindFirstObjectByType<BusUIReferences>();
         if (ui != null && fuelSystem != null)
             fuelSystem.LinkUI(ui);
 
-        // Handle camera and transform
+        // 3. Handle camera and transform
         cachedCameraController = localPlayer.GetComponentInChildren<CameraController>();
         if (localPlayer.TryGetComponent<ClientNetworkTransform>(out var cnt)) cnt.enabled = false;
 
@@ -110,7 +107,7 @@ public class BusSeatManager : NetworkBehaviour
             cachedCameraController.UnlockCursor();
         }
 
-        // Enable input after UI is active
+        // 4. Enable input after UI is active
         busInputHandler.EnableInput();
     }
 
@@ -149,11 +146,19 @@ public class BusSeatManager : NetworkBehaviour
     {
         if (NetworkManager.Singleton.LocalClientId != targetClientId) return;
 
-        // Unlink fuel system
+        // 1. Unlink fuel system
         if (fuelSystem != null) fuelSystem.UnlinkUI();
 
         NetworkObject localPlayer = NetworkManager.Singleton.LocalClient.PlayerObject;
         if (localPlayer == null) return;
+
+        // 2. Restore the Player's normal UI
+        PlayerController pc = localPlayer.GetComponent<PlayerController>();
+        if (pc != null && pc.LocalUI != null)
+        {
+            if (pc.LocalUI.busDriverPanel != null) pc.LocalUI.busDriverPanel.SetActive(false);
+            if (pc.LocalUI.playerPanel != null) pc.LocalUI.playerPanel.SetActive(true);
+        }
 
         if (localPlayer.TryGetComponent<ClientNetworkTransform>(out var cnt)) cnt.enabled = true;
         localPlayer.transform.position = exitPosition;
@@ -169,13 +174,5 @@ public class BusSeatManager : NetworkBehaviour
         lastExitTime   = Time.time;
 
         busInputHandler.DisableInput();
-        if (busDriverPanel != null) busDriverPanel.SetActive(false);
-
-        // Restore player's own UI
-        if (cachedPlayerUI != null)
-        {
-            cachedPlayerUI.SetActive(true);
-            cachedPlayerUI = null;
-        }
     }
 }

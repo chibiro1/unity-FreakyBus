@@ -6,9 +6,9 @@ public class SettingsUIController : MonoBehaviour
     public Slider masterSlider;
     public Slider musicSlider;
     public Slider sfxSlider;
-    public Slider brightnessSlider;
+   // public Slider brightnessSlider;
 
-    public Image brightnessOverlay;
+    //public Image brightnessOverlay;
 
     void Start()
     {
@@ -24,17 +24,17 @@ public class SettingsUIController : MonoBehaviour
         musicSlider.onValueChanged.AddListener(sm.SetMusic);
         sfxSlider.onValueChanged.AddListener(sm.SetSFX);
 
-        brightnessSlider.onValueChanged.AddListener((value) =>
-        {
-            sm.SetBrightness(value);
-            ApplyBrightness(value);
-        });
+       // brightnessSlider.onValueChanged.AddListener((value) =>
+       // {
+       //     sm.SetBrightness(value);
+        //    ApplyBrightness(value);
+       // });
     }
 
-    void ApplyBrightness(float value)
-    {
-        Color c = brightnessOverlay.color;
-        c.a = 1 - value;
-        brightnessOverlay.color = c;
-    }
+   // void ApplyBrightness(float value)
+   // {
+//        Color c = brightnessOverlay.color;
+   //     c.a = 1 - value;
+   //     brightnessOverlay.color = c;
+   // }
 }
