@@ -44,7 +44,7 @@ public class MainMenu : MonoBehaviour
     {
         ShowLoading("Creating session...");
 
-        // Netcode handles scene loading internally — no SceneFader here
+        // Netcode handles scene loading internally ï¿½ no SceneFader here
         string code = await NetworkManagerSetup.Instance.HostSession(maxPlayers: 2, sceneName: gameSceneName);
 
         if (code == null)
@@ -62,33 +62,32 @@ public class MainMenu : MonoBehaviour
     // ---------- JOIN CODE PANEL ----------
 
     public async void ConfirmJoin()
+{
+    string code = joinCodeInput.text.Trim().ToUpper();
+
+    if (string.IsNullOrEmpty(code))
     {
-        string code = joinCodeInput.text.Trim().ToUpper();
-
-        if (string.IsNullOrEmpty(code))
-        {
-            Debug.LogWarning("Please enter a session code.");
-            return;
-        }
-
-        ShowLoading("Joining session...");
-
-        bool success = await NetworkManagerSetup.Instance.JoinSession(code);
-
-        if (success)
-        {
-            // Client uses SceneFader since Netcode scene load is triggered by host
-            if (sceneFader != null)
-                sceneFader.FadeToScene(gameSceneName);
-            else
-                UnityEngine.SceneManagement.SceneManager.LoadScene(gameSceneName);
-        }
-        else
-        {
-            Debug.LogError("Failed to join. Check the code and try again.");
-            ShowPanel(joinCodePanel);
-        }
+        Debug.LogWarning("Please enter a session code.");
+        return;
     }
+
+    ShowLoading("Joining session...");
+
+    bool success = await NetworkManagerSetup.Instance.JoinSession(code);
+
+    if (success)
+    {
+        // BULLETPROOF: Do NOT call FadeToScene or LoadScene here.
+        // Once the handshake is complete, the NetworkManager will 
+        // automatically transition the client to the Gameplay scene.
+        ShowLoading("Synchronizing with Host...");
+    }
+    else
+    {
+        Debug.LogError("Failed to join. Check the code and try again.");
+        ShowPanel(joinCodePanel);
+    }
+}
 
     // ---------- BACK BUTTONS ----------
 

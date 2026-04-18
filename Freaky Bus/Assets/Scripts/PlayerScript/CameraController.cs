@@ -31,6 +31,9 @@ public class CameraController : NetworkBehaviour
     private Vector2 lastTouchPosition;
     private Camera cam;
 
+    // Driver mode — locks pitch, only allows yaw rotation
+    private bool isDriverMode;
+
     #region Netcode
 
     public override void OnNetworkSpawn()
@@ -85,14 +88,18 @@ public class CameraController : NetworkBehaviour
             Input.GetAxis("Mouse Y")
         );
 
-        targetYaw   += mouseDelta.x * mouseSensitivity;
-        targetPitch -= mouseDelta.y * mouseSensitivity;
-        targetPitch  = Mathf.Clamp(targetPitch, minVerticalAngle, maxVerticalAngle);
+        targetYaw += mouseDelta.x * mouseSensitivity;
+
+        // Only allow pitch when not in driver mode
+        if (!isDriverMode)
+        {
+            targetPitch -= mouseDelta.y * mouseSensitivity;
+            targetPitch  = Mathf.Clamp(targetPitch, minVerticalAngle, maxVerticalAngle);
+        }
     }
 
     private void HandleCursorToggle()
     {
-        // Press K to toggle cursor lock on and off
         if (Input.GetKeyDown(toggleCursorKey))
         {
             if (Cursor.lockState == CursorLockMode.Locked)
@@ -129,9 +136,14 @@ public class CameraController : NetworkBehaviour
                 Vector2 delta = touch.position - lastTouchPosition;
                 lastTouchPosition = touch.position;
 
-                targetYaw   += delta.x * touchSensitivity;
-                targetPitch -= delta.y * touchSensitivity;
-                targetPitch  = Mathf.Clamp(targetPitch, minVerticalAngle, maxVerticalAngle);
+                targetYaw += delta.x * touchSensitivity;
+
+                // Only allow pitch when not in driver mode
+                if (!isDriverMode)
+                {
+                    targetPitch -= delta.y * touchSensitivity;
+                    targetPitch  = Mathf.Clamp(targetPitch, minVerticalAngle, maxVerticalAngle);
+                }
             }
             else if (touch.phase == UnityEngine.TouchPhase.Ended && touch.fingerId == activeTouchId)
             {
@@ -190,6 +202,17 @@ public class CameraController : NetworkBehaviour
     {
         targetYaw   = yaw;
         targetPitch = Mathf.Clamp(pitch, minVerticalAngle, maxVerticalAngle);
+    }
+
+    public void SetDriverMode(bool enabled)
+    {
+        isDriverMode = enabled;
+
+        if (enabled)
+        {
+            targetPitch = 0f;
+            pitchAngle  = 0f;
+        }
     }
 
     #endregion

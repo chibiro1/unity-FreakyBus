@@ -33,58 +33,54 @@ public class PlayerSpawnPoint : NetworkBehaviour
     }
 
     private IEnumerator WaitForPlayerObjectThenReposition(ulong clientId)
+{
+    NetworkObject playerObject = null;
+    float timeout = 5f;
+    float elapsed = 0f;
+
+    while (playerObject == null && elapsed < timeout)
     {
-        NetworkObject playerObject = null;
-        float timeout = 5f;
-        float elapsed = 0f;
-
-        while (playerObject == null && elapsed < timeout)
-        {
-            if (NetworkManager.Singleton.ConnectedClients.TryGetValue(clientId, out var client))
-                playerObject = client.PlayerObject;
-
-            if (playerObject == null)
-            {
-                elapsed += Time.deltaTime;
-                yield return null;
-            }
-        }
+        if (NetworkManager.Singleton.ConnectedClients.TryGetValue(clientId, out var client))
+            playerObject = client.PlayerObject;
 
         if (playerObject == null)
         {
-            Debug.LogWarning($"PlayerObject for client {clientId} never became available.");
-            yield break;
+            elapsed += Time.deltaTime;
+            yield return null;
         }
-
-        Rigidbody rb = playerObject.GetComponent<Rigidbody>();
-
-        // Freeze rigidbody so player cant fall during delay
-        if (rb != null)
-        {
-            rb.isKinematic = true;
-            rb.interpolation = RigidbodyInterpolation.None;
-            rb.linearVelocity = Vector3.zero;
-        }
-
-        // Move to spawn point immediately while frozen
-        int playerIndex = GetPlayerIndex(clientId);
-        Transform spawnPoint = playerIndex == 0 ? spawnPoint1 : spawnPoint2;
-
-        if (spawnPoint != null)
-            playerObject.transform.position = spawnPoint.position;
-
-        yield return new WaitForSeconds(spawnDelay);
-
-        // Unfreeze
-        if (rb != null)
-        {
-            rb.linearVelocity = Vector3.zero;
-            rb.isKinematic = false;
-            rb.interpolation = RigidbodyInterpolation.Interpolate;
-        }
-
-        Debug.Log($"Player {clientId} repositioned to {spawnPoint?.position}");
     }
+
+    if (playerObject == null) yield break;
+
+    Rigidbody rb = playerObject.GetComponent<Rigidbody>();
+    
+    // 1. Freeze the player completely
+    if (rb != null)
+    {
+        rb.isKinematic = true;
+        rb.linearVelocity = Vector3.zero;
+    }
+
+    // 2. Determine Spawn Point
+    int playerIndex = GetPlayerIndex(clientId);
+    Transform spawnPoint = playerIndex == 0 ? spawnPoint1 : spawnPoint2;
+
+    if (spawnPoint != null)
+    {
+        // CRITICAL FIX: Set both Position AND Rotation
+        playerObject.transform.SetPositionAndRotation(spawnPoint.position, spawnPoint.rotation);
+    }
+
+    yield return new WaitForSeconds(spawnDelay);
+
+    // 3. Unfreeze
+    if (rb != null)
+    {
+        rb.isKinematic = false;
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+    }
+}
 
     private int GetPlayerIndex(ulong clientId)
     {

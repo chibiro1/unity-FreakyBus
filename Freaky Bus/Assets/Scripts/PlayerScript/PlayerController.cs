@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.InputSystem;
 using Unity.Netcode;
 
@@ -31,9 +31,12 @@ public class PlayerController : NetworkBehaviour
     [Header("Camera")]
     [SerializeField] private CameraController cameraController;
 
-    [Header("Mobile UI")]
-    [SerializeField] private FixedJoystick moveJoystick;
-    [SerializeField] private UnityEngine.UI.Button jumpButton;
+    [Header("Mobile UI Prefab")]
+    [SerializeField] private GameObject uiPrefab;
+
+    private FixedJoystick moveJoystick;
+    private UnityEngine.UI.Button jumpButton;
+    private PlayerUIReferences localUI;
 
     private Rigidbody rb;
     private CapsuleCollider col;
@@ -55,43 +58,64 @@ public class PlayerController : NetworkBehaviour
 
     private PlayerInputActions inputActions;
 
+    // Expose localUI so BusSeatManager can show/hide it
+    public PlayerUIReferences LocalUI => localUI;
+
     #region Netcode
 
     public override void OnNetworkSpawn()
     {
-        rb = GetComponent<Rigidbody>();
-        col = GetComponent<CapsuleCollider>();
-
         rb.freezeRotation = true;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
         rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
-        rb.linearDamping = 0f;
-        rb.angularDamping = 0f;
-
-        inputActions = new PlayerInputActions();
 
         if (!IsOwner)
         {
-            if (cameraController != null)
-                cameraController.enabled = false;
-
+            if (cameraController != null) cameraController.enabled = false;
             rb.isKinematic = true;
             enabled = false;
             return;
+        }
+
+        inputActions = new PlayerInputActions();
+
+        if (uiPrefab != null)
+        {
+            // Find existing Canvas in scene to parent UI under
+            // This ensures GraphicRaycaster and EventSystem work correctly
+            Canvas sceneCanvas = Object.FindFirstObjectByType<Canvas>();
+
+            GameObject uiInstance = sceneCanvas != null
+                ? Instantiate(uiPrefab, sceneCanvas.transform)
+                : Instantiate(uiPrefab);
+
+            localUI = uiInstance.GetComponent<PlayerUIReferences>();
+
+            if (localUI != null)
+            {
+                moveJoystick = localUI.moveJoystick;
+                jumpButton    = localUI.jumpButton;
+
+                if (jumpButton != null)
+                    jumpButton.onClick.AddListener(OnMobileJump);
+            }
+            else
+            {
+                Debug.LogError("UI Prefab is missing PlayerUIReferences component!");
+            }
         }
 
         inputActions.Enable();
         inputActions.Player.Move.performed += OnMove;
         inputActions.Player.Move.canceled  += OnMove;
         inputActions.Player.Jump.performed += OnJump;
-
-        // Use coroutine to find UI — retries until found
-        StartCoroutine(FindMobileUICoroutine());
     }
 
     public override void OnNetworkDespawn()
     {
         if (!IsOwner) return;
+
+        if (localUI != null) Destroy(localUI.gameObject);
 
         inputActions.Player.Move.performed -= OnMove;
         inputActions.Player.Move.canceled  -= OnMove;
@@ -106,50 +130,15 @@ public class PlayerController : NetworkBehaviour
 
     #endregion
 
-    #region Mobile UI Finding
-
-    private System.Collections.IEnumerator FindMobileUICoroutine()
-    {
-        // Keep trying every frame until both references are found
-        while (moveJoystick == null || jumpButton == null)
-        {
-            if (moveJoystick == null)
-            {
-                GameObject joystickGO = GameObject.FindWithTag("JoystickUI");
-                if (joystickGO != null)
-                    moveJoystick = joystickGO.GetComponent<FixedJoystick>();
-            }
-
-            if (jumpButton == null)
-            {
-                GameObject jumpGO = GameObject.FindWithTag("JumpButtonUI");
-                if (jumpGO != null)
-                {
-                    jumpButton = jumpGO.GetComponent<UnityEngine.UI.Button>();
-                    if (jumpButton != null)
-                        jumpButton.onClick.AddListener(OnMobileJump);
-                }
-            }
-
-            yield return null;
-        }
-
-        Debug.Log("Mobile UI references found successfully!");
-    }
-
-    #endregion
-
     #region Unity Lifecycle
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody>();
+        rb  = GetComponent<Rigidbody>();
         col = GetComponent<CapsuleCollider>();
-        inputActions = new PlayerInputActions();
     }
 
-    private void OnEnable() { }
-
+    private void OnEnable()  { }
     private void OnDisable() { }
 
     private void Update()
@@ -183,7 +172,7 @@ public class PlayerController : NetworkBehaviour
     private void OnJump(InputAction.CallbackContext ctx)
     {
         jumpBufferTimer = jumpBufferWindow;
-        jumpRequested = true;
+        jumpRequested   = true;
     }
 
     private void OnMobileJump()
@@ -262,11 +251,10 @@ public class PlayerController : NetworkBehaviour
             ? cameraController.YawAngle
             : transform.eulerAngles.y;
 
-        Quaternion yawRotation = Quaternion.Euler(0f, yaw, 0f);
-        Vector3 forward = yawRotation * Vector3.forward;
-        Vector3 right   = yawRotation * Vector3.right;
-
-        Vector3 desiredDirection = (forward * input.y + right * input.x).normalized;
+        Quaternion yawRotation    = Quaternion.Euler(0f, yaw, 0f);
+        Vector3    forward        = yawRotation * Vector3.forward;
+        Vector3    right          = yawRotation * Vector3.right;
+        Vector3    desiredDirection = (forward * input.y + right * input.x).normalized;
 
         float accel = input.magnitude > 0.01f ? acceleration : deceleration;
         if (!isGrounded) accel *= airControlMultiplier;
@@ -318,8 +306,8 @@ public class PlayerController : NetworkBehaviour
                 rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
                 rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
                 jumpCooldownTimer = jumpCooldown;
-                jumpBufferTimer = 0f;
-                jumpRequested = false;
+                jumpBufferTimer   = 0f;
+                jumpRequested     = false;
             }
 
             if (!jumpRequested)
@@ -333,7 +321,7 @@ public class PlayerController : NetworkBehaviour
         if (isGrounded && rb.linearVelocity.y <= 0f) return;
 
         if (rb.linearVelocity.y < 0f)
-            rb.AddForce(Vector3.down * Physics.gravity.magnitude * (fallMultiplier - 1f), ForceMode.Acceleration);
+            rb.AddForce(Vector3.down * Physics.gravity.magnitude * (fallMultiplier   - 1f), ForceMode.Acceleration);
         else if (rb.linearVelocity.y > 0f)
             rb.AddForce(Vector3.down * Physics.gravity.magnitude * (gravityMultiplier - 1f), ForceMode.Acceleration);
     }
@@ -357,15 +345,15 @@ public class PlayerController : NetworkBehaviour
 
     #region Public API
 
-    public bool IsGrounded => isGrounded;
-    public float CurrentSpeed => currentSpeed;
-    public bool CanJump => isGrounded && jumpCooldownTimer <= 0f;
-    public float JumpCooldownRemaining => Mathf.Max(0f, jumpCooldownTimer);
+    public bool  IsGrounded             => isGrounded;
+    public float CurrentSpeed           => currentSpeed;
+    public bool  CanJump                => isGrounded && jumpCooldownTimer <= 0f;
+    public float JumpCooldownRemaining  => Mathf.Max(0f, jumpCooldownTimer);
 
     public void Teleport(Vector3 position)
     {
-        rb.position = position;
-        rb.linearVelocity = Vector3.zero;
+        rb.position        = position;
+        rb.linearVelocity  = Vector3.zero;
     }
 
     #endregion

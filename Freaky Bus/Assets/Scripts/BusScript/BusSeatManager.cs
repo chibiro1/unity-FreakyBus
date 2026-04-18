@@ -11,10 +11,10 @@ public class BusSeatManager : NetworkBehaviour
     [Header("References")]
     [SerializeField] private BusController busController;
     [SerializeField] private BusInputHandler busInputHandler;
+    [SerializeField] private FuelSystem fuelSystem;
 
     [Header("Bus UI")]
     [SerializeField] private GameObject busDriverPanel;
-    [SerializeField] private GameObject playerPanel;
 
     private ulong driverClientId = ulong.MaxValue;
     public bool IsDriverSeatTaken => driverClientId != ulong.MaxValue;
@@ -26,6 +26,9 @@ public class BusSeatManager : NetworkBehaviour
 
     private float lastExitTime;
     [SerializeField] private float exitCooldown = 1f;
+
+    // Cache the player's local UI so we can show/hide it correctly
+    private GameObject cachedPlayerUI;
 
     public bool CanEnterSeat() => Time.time - lastExitTime > exitCooldown;
 
@@ -56,15 +59,14 @@ public class BusSeatManager : NetworkBehaviour
         if (playerObject == null) return;
 
         seatedPlayerObject = playerObject;
-        isPlayerSeated = true;
-        isExiting = false;
+        isPlayerSeated     = true;
+        isExiting          = false;
 
         busController.StartSteerDelay();
 
-        // Disable Player Physics/Logic
-        if (playerObject.TryGetComponent<CapsuleCollider>(out var col)) col.enabled = false;
-        if (playerObject.TryGetComponent<Rigidbody>(out var rb)) rb.isKinematic = true;
-        if (playerObject.TryGetComponent<PlayerController>(out var pc)) pc.enabled = false;
+        if (playerObject.TryGetComponent<CapsuleCollider>(out var col)) col.enabled     = false;
+        if (playerObject.TryGetComponent<Rigidbody>(out var rb))         rb.isKinematic = true;
+        if (playerObject.TryGetComponent<PlayerController>(out var pc))  pc.enabled     = false;
 
         TeleportToSeatClientRpc(driverSeat.position, driverSeat.rotation, clientId);
     }
@@ -77,11 +79,24 @@ public class BusSeatManager : NetworkBehaviour
         NetworkObject localPlayer = NetworkManager.Singleton.LocalClient.PlayerObject;
         if (localPlayer == null) return;
 
-        // 1. ACTIVATE UI IMMEDIATELY so InputHandler can find references
-        if (busDriverPanel != null) busDriverPanel.SetActive(true);
-        if (playerPanel != null) playerPanel.SetActive(false);
+        // Get the player's instantiated UI and hide it
+        // Use LocalUI from PlayerController instead of a scene reference
+        PlayerController pc = localPlayer.GetComponent<PlayerController>();
+        if (pc != null && pc.LocalUI != null)
+        {
+            cachedPlayerUI = pc.LocalUI.gameObject;
+            cachedPlayerUI.SetActive(false);
+        }
 
-        // 2. Handle Camera/Transform
+        // Show bus driver panel
+        if (busDriverPanel != null) busDriverPanel.SetActive(true);
+
+        // Link fuel system UI
+        BusUIReferences ui = Object.FindFirstObjectByType<BusUIReferences>();
+        if (ui != null && fuelSystem != null)
+            fuelSystem.LinkUI(ui);
+
+        // Handle camera and transform
         cachedCameraController = localPlayer.GetComponentInChildren<CameraController>();
         if (localPlayer.TryGetComponent<ClientNetworkTransform>(out var cnt)) cnt.enabled = false;
 
@@ -91,10 +106,11 @@ public class BusSeatManager : NetworkBehaviour
         if (cachedCameraController != null)
         {
             cachedCameraController.SetLookDirection(driverSeat.eulerAngles.y, 0f);
+            cachedCameraController.SetDriverMode(true);
             cachedCameraController.UnlockCursor();
         }
 
-        // 3. ENABLE INPUT (Now that UI is active)
+        // Enable input after UI is active
         busInputHandler.EnableInput();
     }
 
@@ -111,18 +127,18 @@ public class BusSeatManager : NetworkBehaviour
         ulong clientId = rpcParams.Receive.SenderClientId;
         if (driverClientId != clientId) return;
 
-        isPlayerSeated = false;
+        isPlayerSeated     = false;
         seatedPlayerObject = null;
-        driverClientId = ulong.MaxValue;
+        driverClientId     = ulong.MaxValue;
 
         if (!NetworkManager.Singleton.ConnectedClients.TryGetValue(clientId, out var client)) return;
 
         NetworkObject playerObject = client.PlayerObject;
         if (playerObject == null) return;
 
-        if (playerObject.TryGetComponent<CapsuleCollider>(out var col)) col.enabled = true;
-        if (playerObject.TryGetComponent<Rigidbody>(out var rb)) rb.isKinematic = false;
-        if (playerObject.TryGetComponent<PlayerController>(out var pc)) pc.enabled = true;
+        if (playerObject.TryGetComponent<CapsuleCollider>(out var col)) col.enabled     = true;
+        if (playerObject.TryGetComponent<Rigidbody>(out var rb))         rb.isKinematic = false;
+        if (playerObject.TryGetComponent<PlayerController>(out var pc))  pc.enabled     = true;
 
         busController.StopBus();
         ExitSeatClientRpc(exitSeatPoint.position, clientId);
@@ -133,20 +149,33 @@ public class BusSeatManager : NetworkBehaviour
     {
         if (NetworkManager.Singleton.LocalClientId != targetClientId) return;
 
+        // Unlink fuel system
+        if (fuelSystem != null) fuelSystem.UnlinkUI();
+
         NetworkObject localPlayer = NetworkManager.Singleton.LocalClient.PlayerObject;
         if (localPlayer == null) return;
 
         if (localPlayer.TryGetComponent<ClientNetworkTransform>(out var cnt)) cnt.enabled = true;
         localPlayer.transform.position = exitPosition;
 
-        if (cachedCameraController != null) cachedCameraController.LockCursor();
+        if (cachedCameraController != null)
+        {
+            cachedCameraController.SetDriverMode(false);
+            cachedCameraController.LockCursor();
+        }
         cachedCameraController = null;
 
-        isExiting = false;
-        lastExitTime = Time.time;
+        isExiting      = false;
+        lastExitTime   = Time.time;
 
         busInputHandler.DisableInput();
         if (busDriverPanel != null) busDriverPanel.SetActive(false);
-        if (playerPanel != null) playerPanel.SetActive(true);
+
+        // Restore player's own UI
+        if (cachedPlayerUI != null)
+        {
+            cachedPlayerUI.SetActive(true);
+            cachedPlayerUI = null;
+        }
     }
 }

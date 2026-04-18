@@ -1,62 +1,87 @@
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 
 public class FuelSystem : MonoBehaviour
 {
-    public float startFuel;
+    [Header("Fuel Settings")]
+    public float startFuel = 100f;
     public float maxFuel = 100f;
     public int refuelCost = 300;
-    public float fuelConsumptionRate;
-    public Slider fuelIndicatorSId;
-    public TMP_Text fuelIndicatorTxt;
+    public float fuelConsumptionRate = 1f;
     public float currentFuel;
 
-    [Header("Gas Station Interaction")]
-    public GameObject refuelButtonUI;   // Assign your UI Button GameObject here
+    // These are no longer public; they are assigned dynamically
+    private Slider fuelIndicatorSId;
+    private TMP_Text fuelIndicatorTxt;
+    private GameObject refuelButtonUI;
+    private Button refuelButton;
+
     private bool isAtGasStation = false;
     private bool isRefueling = false;
+    private bool hasLinkedUI = false;
 
     void Awake()
     {
-        currentFuel = startFuel;
-        refuelButtonUI.SetActive(false); // Hide button at start
+        currentFuel = Mathf.Clamp(startFuel, 0, maxFuel);
     }
 
-    void Start()
+    // Called dynamically when a player sits down and their UI turns on
+    public void LinkUI(BusUIReferences ui)
     {
-        if (startFuel > maxFuel)
-            startFuel = maxFuel;
+        fuelIndicatorSId = ui.fuelIndicatorSId;
+        fuelIndicatorTxt = ui.fuelIndicatorTxt;
+        refuelButtonUI = ui.refuelButtonUI;
+        refuelButton = ui.refuelButtonClickable;
+
+        if (refuelButton != null)
+        {
+            refuelButton.onClick.RemoveAllListeners();
+            refuelButton.onClick.AddListener(OnRefuelButtonPressed);
+        }
+
         fuelIndicatorSId.maxValue = maxFuel;
-        currentFuel = startFuel;
+        refuelButtonUI.SetActive(isAtGasStation); // Only show if currently at station
+        hasLinkedUI = true;
+
         UpdateUI();
     }
 
-    // Call this from the UI Button OnClick()
+    // Called dynamically when player leaves seat
+    public void UnlinkUI()
+    {
+        hasLinkedUI = false;
+        fuelIndicatorSId = null;
+        fuelIndicatorTxt = null;
+        
+        if (refuelButton != null)
+            refuelButton.onClick.RemoveAllListeners();
+            
+        refuelButtonUI = null;
+        refuelButton = null;
+    }
+
     public void OnRefuelButtonPressed()
     {
-        if (MoneyManager.Instance == null) return;
-
-        if (MoneyManager.Instance.money < refuelCost)
+        if (MoneyManager.Instance == null || MoneyManager.Instance.money < refuelCost)
         {
             Debug.Log("Not enough money to refuel!");
             return;
         }
 
         MoneyManager.Instance.RemoveMoney(refuelCost);
-
         isRefueling = true;
-
-        Debug.Log("Refueling started (-300)");
     }
 
     public void ReduceFuel()
     {
+        // Don't burn fuel if refueling
+        if (isRefueling) return; 
+
         currentFuel -= Time.deltaTime * fuelConsumptionRate;
-        startFuel = currentFuel;
-        UpdateUI();
+        if (currentFuel < 0) currentFuel = 0;
+        
+        if (hasLinkedUI) UpdateUI();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -64,7 +89,7 @@ public class FuelSystem : MonoBehaviour
         if (other.CompareTag("GasStation"))
         {
             isAtGasStation = true;
-            refuelButtonUI.SetActive(true); // Show button when entering
+            if (hasLinkedUI && refuelButtonUI != null) refuelButtonUI.SetActive(true);
         }
     }
 
@@ -72,14 +97,13 @@ public class FuelSystem : MonoBehaviour
     {
         if (other.CompareTag("GasStation") && isRefueling)
         {
-            currentFuel += Time.deltaTime * 0.2f;
-            if (currentFuel > maxFuel)
+            currentFuel += Time.deltaTime * 10f; // Adjusted for reasonable fill speed
+            if (currentFuel >= maxFuel)
             {
                 currentFuel = maxFuel;
-                isRefueling = false; // Stop refueling when full
+                isRefueling = false;
             }
-            startFuel = currentFuel;
-            UpdateUI();
+            if (hasLinkedUI) UpdateUI();
         }
     }
 
@@ -88,21 +112,23 @@ public class FuelSystem : MonoBehaviour
         if (other.CompareTag("GasStation"))
         {
             isAtGasStation = false;
-            isRefueling = false;        // Stop refueling when leaving
-            refuelButtonUI.SetActive(false); // Hide button when leaving
+            isRefueling = false;
+            if (hasLinkedUI && refuelButtonUI != null) refuelButtonUI.SetActive(false);
         }
     }
 
-    void UpdateUI()
+    private void UpdateUI()
     {
-        fuelIndicatorSId.value = currentFuel;
-        fuelIndicatorTxt.text = "FUEL GAUGE: " + currentFuel.ToString("0") + " %";
+        if (!hasLinkedUI) return; // Bulletproof check
 
-        if (currentFuel <= 0)
+        if (fuelIndicatorSId != null) fuelIndicatorSId.value = currentFuel;
+        
+        if (fuelIndicatorTxt != null)
         {
-            currentFuel = 0;
-            startFuel = 0;
-            fuelIndicatorTxt.text = "OUT OF FUEL!!";
+            if (currentFuel <= 0)
+                fuelIndicatorTxt.text = "OUT OF FUEL!!";
+            else
+                fuelIndicatorTxt.text = "FUEL GAUGE: " + currentFuel.ToString("0") + " %";
         }
     }
 }

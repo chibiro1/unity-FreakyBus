@@ -1,34 +1,31 @@
 using UnityEngine;
-using TMPro;
+using System;
 
 public class MoneyManager : MonoBehaviour
 {
     public static MoneyManager Instance;
 
     public int money = 0;
-    public TextMeshProUGUI moneyText;
+    
+    // Bulletproof: An event that broadcasts when money changes
+    public event Action<int> OnMoneyChanged; 
 
     void Awake()
     {
-        Instance = this;
-        UpdateUI();
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
     }
 
     public void AddMoney(int amount)
     {
         money += amount;
-        UpdateUI();
+        OnMoneyChanged?.Invoke(money); // Tell anyone listening that money changed
     }
 
-    void UpdateUI()
-    {
-        if (moneyText != null)
-            moneyText.text = "" + money.ToString();
-    }
     public void RemoveMoney(int amount)
     {
         money -= amount;
         if (money < 0) money = 0;
-        UpdateUI();
+        OnMoneyChanged?.Invoke(money);
     }
 }

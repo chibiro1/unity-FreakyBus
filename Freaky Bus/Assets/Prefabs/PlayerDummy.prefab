@@ -395,6 +395,7 @@ MonoBehaviour:
   cameraController: {fileID: 507332023014374735}
   moveJoystick: {fileID: 0}
   jumpButton: {fileID: 0}
+  uiPrefab: {fileID: 2906072408217865552, guid: 3b6ba6134fb3f824a90cd61182b27b94, type: 3}
 --- !u!114 &-6112887957654407065
 MonoBehaviour:
   m_ObjectHideFlags: 0
