@@ -220,6 +220,9 @@ PrefabInstance:
       addedObject: {fileID: 7994833564437181430}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a4e426ddb14bd5c46b19d2c2530e52a0, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 1800865025326728892}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a4e426ddb14bd5c46b19d2c2530e52a0, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 6582244999803780669}
   m_SourcePrefab: {fileID: 100100000, guid: a4e426ddb14bd5c46b19d2c2530e52a0, type: 3}
 --- !u!1 &4960534265801425638 stripped
@@ -272,6 +275,31 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1800865025326728892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4960534265801425638}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 1642465703
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!114 &6582244999803780669
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -284,8 +312,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d5762e447a1e3e46b70b8995148ff7b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PassengerAI
+  ShowTopMostFoldoutHeaderGroup: 1
+  anomalyChance: 40
+  anomalyEffects: {fileID: 0}
+  anomalySFX: {fileID: 0}
   walkSpeed: 4
   fareIndicator: {fileID: 6557635894484840331}
+  boardingDelay: 0.75
 --- !u!4 &5736612914984327260 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a4e426ddb14bd5c46b19d2c2530e52a0, type: 3}

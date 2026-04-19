@@ -1730,6 +1730,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1852795660}
     m_Modifications:
+    - target: {fileID: -8375544029920956746, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 142531781
+      objectReference: {fileID: 0}
+    - target: {fileID: -8375544029920956746, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8375544029920956746, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 3325109353
+      objectReference: {fileID: 0}
     - target: {fileID: 2429865800715290184, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
       propertyPath: m_Name
       value: bus stop
@@ -5811,6 +5823,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1852795660}
     m_Modifications:
+    - target: {fileID: -8375544029920956746, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 197876672
+      objectReference: {fileID: 0}
+    - target: {fileID: -8375544029920956746, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8375544029920956746, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 3325109353
+      objectReference: {fileID: 0}
     - target: {fileID: 2429865800715290184, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
       propertyPath: m_Name
       value: bus stop
@@ -6085,6 +6109,29 @@ MonoBehaviour:
   seats:
   - {fileID: 215347748}
   - {fileID: 2105954527}
+  - {fileID: 1225903223}
+  - {fileID: 1748977434}
+  - {fileID: 903384915}
+  - {fileID: 110511789}
+  - {fileID: 25428322}
+  - {fileID: 790516869}
+  - {fileID: 1490904073}
+  - {fileID: 46185152}
+  - {fileID: 898852083}
+  - {fileID: 826855321}
+  - {fileID: 1007733300}
+  - {fileID: 1974936224}
+  - {fileID: 503139207}
+  - {fileID: 1701120904}
+  - {fileID: 967706627}
+  - {fileID: 1700903023}
+  - {fileID: 2109776898}
+  - {fileID: 684624676}
+  - {fileID: 505956224}
+  - {fileID: 1848558334}
+  - {fileID: 1548820811}
+  - {fileID: 2007514903}
+  - {fileID: 225723499}
   dropPrepared: 0
   onboardPassengers: []
   pendingDropPassengers: []
@@ -13907,6 +13954,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1852795660}
     m_Modifications:
+    - target: {fileID: -8375544029920956746, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1813223359
+      objectReference: {fileID: 0}
+    - target: {fileID: -8375544029920956746, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8375544029920956746, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 3325109353
+      objectReference: {fileID: 0}
     - target: {fileID: 2429865800715290184, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
       propertyPath: m_Name
       value: bus stop
@@ -33105,6 +33164,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1852795660}
     m_Modifications:
+    - target: {fileID: -8375544029920956746, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2318770154
+      objectReference: {fileID: 0}
+    - target: {fileID: -8375544029920956746, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8375544029920956746, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 3325109353
+      objectReference: {fileID: 0}
     - target: {fileID: 2429865800715290184, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
       propertyPath: m_Name
       value: bus stop
@@ -33889,6 +33960,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1852795660}
     m_Modifications:
+    - target: {fileID: -8375544029920956746, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3438120178
+      objectReference: {fileID: 0}
+    - target: {fileID: -8375544029920956746, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8375544029920956746, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 3325109353
+      objectReference: {fileID: 0}
     - target: {fileID: 2429865800715290184, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
       propertyPath: m_Name
       value: bus stop
@@ -35148,7 +35231,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1701120903}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 8.779999, y: 2.113, z: -5.9199996}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -43246,6 +43329,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1852795660}
     m_Modifications:
+    - target: {fileID: -8375544029920956746, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3562368225
+      objectReference: {fileID: 0}
+    - target: {fileID: -8375544029920956746, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8375544029920956746, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 3325109353
+      objectReference: {fileID: 0}
     - target: {fileID: 2429865800715290184, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
       propertyPath: m_Name
       value: bus stop
@@ -44634,7 +44729,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9207148573663339121, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
       propertyPath: maxSpawn
-      value: 0
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9207148573663339121, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
+      propertyPath: minSpawn
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9207148573663339121, guid: 55ec82cfe5785934dbaadf0a77ed4cac, type: 3}
       propertyPath: spawnCount

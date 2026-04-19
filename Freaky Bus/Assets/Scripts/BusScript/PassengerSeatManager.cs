@@ -7,67 +7,55 @@ public class PassengerSeatManager : NetworkBehaviour
     public Transform[] seats;
     public bool dropPrepared = false;
 
-    private List<Transform> availableSeats = new List<Transform>();
+    private List<int> availableSeatIndices = new List<int>();
 
-    // =========================
-    // ONBOARD SYSTEM
-    // =========================
     public List<PassengerAI> onboardPassengers = new List<PassengerAI>();
-
-    // passengers selected at DropoffZone but not yet removed
     public List<PassengerAI> pendingDropPassengers = new List<PassengerAI>();
 
     void Awake()
     {
-        foreach (Transform s in seats)
-        {
-            if (s != null)
-                availableSeats.Add(s);
-        }
+        InitializeSeats();
     }
 
     public override void OnNetworkSpawn()
     {
-    
-    if (!IsServer) return;
+        if (!IsServer) return;
+        InitializeSeats();
+    }
 
-    availableSeats.Clear();
-    foreach (Transform s in seats)
+    void InitializeSeats()
     {
-        if (s != null) availableSeats.Add(s);
-    }
-    }
+        availableSeatIndices.Clear();
 
-    // =========================
-    // SEAT SYSTEM (UNCHANGED)
-    // =========================
-    public Transform GetAvailableSeat()
-    {
-        if (availableSeats.Count == 0) return null;
+        for (int i = 0; i < seats.Length; i++)
+        {
+            if (seats[i] != null)
+                availableSeatIndices.Add(i);
+        }
 
-        int index = Random.Range(0, availableSeats.Count);
-        Transform seat = availableSeats[index];
-
-        availableSeats.RemoveAt(index);
-        return seat;
+        Debug.Log("[SeatManager] Seats initialized: " + availableSeatIndices.Count);
     }
 
+    // ✅ FIXED: INDEX-BASED SYSTEM
     public int GetAvailableSeatIndex()
     {
-    if (availableSeats.Count == 0) return -1;
-    
-    int randomIndex = Random.Range(0, availableSeats.Count);
-    Transform seat = availableSeats[randomIndex];
-    
-    int originalIndex = System.Array.IndexOf(seats, seat);
-    
-    availableSeats.RemoveAt(randomIndex);
-    return originalIndex;
+        if (availableSeatIndices.Count == 0)
+        {
+            Debug.LogWarning("[SeatManager] NO AVAILABLE SEATS!");
+            return -1;
+        }
+
+        int rand = Random.Range(0, availableSeatIndices.Count);
+        int seatIndex = availableSeatIndices[rand];
+
+        availableSeatIndices.RemoveAt(rand);
+
+        return seatIndex;
     }
 
     public bool IsFull()
     {
-        return availableSeats.Count == 0;
+        return availableSeatIndices.Count == 0;
     }
 
     // =========================
@@ -85,13 +73,11 @@ public class PassengerSeatManager : NetworkBehaviour
     }
 
     // =========================
-    // DROP SYSTEM (2 STEP)
+    // DROP SYSTEM
     // =========================
-
-    // STEP 1: SELECT passengers
     public void SelectRandomForDrop(int count)
     {
-        if (dropPrepared) return; // 🔥 prevents repeated selection
+        if (dropPrepared) return;
 
         pendingDropPassengers.Clear();
 
@@ -110,14 +96,12 @@ public class PassengerSeatManager : NetworkBehaviour
             temp.RemoveAt(index);
         }
 
-        dropPrepared = true; // 🔥 lock selection
+        dropPrepared = true;
     }
 
-    // STEP 2: EXECUTE drop
     public void ExecuteDrop()
     {
-        if (!IsServer) return; 
-        
+        if (!IsServer) return;
         if (!dropPrepared) return;
 
         foreach (PassengerAI p in pendingDropPassengers)
@@ -125,7 +109,7 @@ public class PassengerSeatManager : NetworkBehaviour
             if (p == null) continue;
 
             RemoveOnboard(p);
-            p.InstantDropOff(); 
+            p.InstantDropOff();
         }
 
         pendingDropPassengers.Clear();
