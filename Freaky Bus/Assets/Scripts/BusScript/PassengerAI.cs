@@ -42,6 +42,8 @@ public class PassengerAI : NetworkBehaviour
     private BusStopPas busStop;
 
     private NetworkTransform netTransform;
+    private Collider busCollider; // reference to bus collider
+    
 
     // =========================
     // INIT
@@ -84,7 +86,14 @@ public class PassengerAI : NetworkBehaviour
             netTransform.enabled = !newVal;
 
         if (TryGetComponent<Collider>(out Collider col))
-            col.enabled = !newVal;
+        {
+            if (newVal && busCollider != null)
+                Physics.IgnoreCollision(col, busCollider, true);  // seated: ignore bus physics
+            else if (!newVal && busCollider != null)
+                Physics.IgnoreCollision(col, busCollider, false); // standing: restore collision
+
+            col.enabled = true; // always keep on for click raycasts
+        }
 
         UpdateUI();
     }
@@ -110,6 +119,7 @@ public class PassengerAI : NetworkBehaviour
         if (isBoarding.Value && targetDoor != null)
             MoveToDoor();
     }
+
     void LateUpdate()
     {
         if (!IsServer) return;
@@ -118,6 +128,7 @@ public class PassengerAI : NetworkBehaviour
         transform.position = targetSeat.position;
         transform.rotation = targetSeat.rotation * Quaternion.Euler(seatRotationOffset);
     }
+
     void MoveToDoor()
     {
         Vector3 dir = targetDoor.position - transform.position;
@@ -134,7 +145,7 @@ public class PassengerAI : NetworkBehaviour
         }
         else
         {
-            Sit(); // ✅ instant boarding (no delay)
+            Sit();
         }
     }
 
@@ -148,6 +159,7 @@ public class PassengerAI : NetworkBehaviour
         assignedSeatIndex = seatIndex;
         targetSeat = seat;
         busManager = manager;
+        busCollider = manager.GetComponentInChildren<Collider>();
 
         float distA = Vector3.Distance(transform.position, doorA.position);
         float distB = Vector3.Distance(transform.position, doorB.position);
@@ -160,7 +172,7 @@ public class PassengerAI : NetworkBehaviour
     }
 
     // =========================
-    // SIT (FIXED ROTATION)
+    // SIT
     // =========================
     void Sit()
     {
@@ -190,9 +202,7 @@ public class PassengerAI : NetworkBehaviour
         if (seatIndex >= 0 && seatIndex < busManager.seats.Length)
         {
             Transform seat = busManager.seats[seatIndex];
-
             transform.position = seat.position;
-
             transform.rotation = seat.rotation * Quaternion.Euler(seatRotationOffset);
         }
     }

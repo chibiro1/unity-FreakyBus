@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 531523685535184523}
   - component: {fileID: 4274281648372529036}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: AnomalyTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -63,7 +63,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3888649579930234195}
   - component: {fileID: 7388909831694828974}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Sfx
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -196,7 +196,7 @@ GameObject:
   - component: {fileID: 8475136909775919604}
   - component: {fileID: 70566593696895808}
   - component: {fileID: 8553804381168034200}
-  m_Layer: 5
+  m_Layer: 12
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -383,13 +383,117 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8088491205238614672, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: -7296168764223707068, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: -7009797857457697962, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: -6771956594820943956, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: -6596415563092480847, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: -6447641779288935992, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: -6125834200195402662, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: -4213761076027111091, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: -3192666936243153985, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: -2191059587536555441, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: -1939926859696433821, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: -1211320474259115847, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: -1145626792664651531, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 535757282367290954, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
       propertyPath: m_Name
       value: Balen Passenger
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
       propertyPath: m_Layer
-      value: 11
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 1092016712696902630, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 1790183945725220954, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 3261269001824476975, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 3810672943168561053, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 4047045965386286885, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 4101161180453605438, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 4203700821794050026, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 4819001077394492298, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 4862831813553991170, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 6111994666889643382, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 6905609870639353253, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 7036213049465896255, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -419,6 +523,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1318340784578256107}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -2780616761269430733}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5279058528969972214}
   m_SourcePrefab: {fileID: 100100000, guid: 78bf19208abf99d48bc60b821faa8ecf, type: 3}
 --- !u!4 &2484155628871465587 stripped
 Transform:
@@ -487,7 +597,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3390799413
+  GlobalObjectIdHash: 2653668076
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -518,7 +628,7 @@ MonoBehaviour:
   anomalySFX: {fileID: 7388909831694828974}
   walkSpeed: 4
   fareIndicator: {fileID: 8635634363506592246}
-  boardingDelay: 1.5
+  seatRotationOffset: {x: 0, y: 180, z: 0}
 --- !u!114 &1318340784578256107
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -565,3 +675,47 @@ MonoBehaviour:
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!54 &-2780616761269430733
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2968627306779369673}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &5279058528969972214
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2968627306779369673}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.Components.NetworkRigidbody
+  ShowTopMostFoldoutHeaderGroup: 1
+  NetworkRigidbodyBaseExpanded: 0
+  UseRigidBodyForMotion: 0
+  AutoUpdateKinematicState: 1
+  AutoSetKinematicOnDespawn: 1
