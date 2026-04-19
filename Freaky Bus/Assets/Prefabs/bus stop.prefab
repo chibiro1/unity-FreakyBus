@@ -173,6 +173,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b98d3244b5bbec840ac5e9c8169890d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PassengerSpawner
+  ShowTopMostFoldoutHeaderGroup: 1
   passengerPrefabs:
   - {fileID: 4960534265801425638, guid: 187e06ce512e5454e8de2ab24cea002a, type: 3}
   - {fileID: 2968627306779369673, guid: c3ed818ddfd373149b9399fb7e200627, type: 3}
@@ -182,7 +183,10 @@ MonoBehaviour:
   - {fileID: 1035755821395824510, guid: 5273fd265ebf4584982ccedf2283e166, type: 3}
   spawnPoint: {fileID: 0}
   scatterRadius: 3.5
-  spawnCount: 5
+  minSpawn: 1
+  maxSpawn: 5
+  minCooldown: 180
+  maxCooldown: 680
 --- !u!4 &3094903950192745714 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: f755b67437c4b0e408e5804d0e3bc07d, type: 3}

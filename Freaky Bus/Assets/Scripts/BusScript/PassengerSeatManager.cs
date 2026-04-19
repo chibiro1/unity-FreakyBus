@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using Unity.Netcode;
 
-public class PassengerSeatManager : MonoBehaviour
+public class PassengerSeatManager : NetworkBehaviour
 {
     public Transform[] seats;
     public bool dropPrepared = false;
@@ -25,6 +26,18 @@ public class PassengerSeatManager : MonoBehaviour
         }
     }
 
+    public override void OnNetworkSpawn()
+    {
+    
+    if (!IsServer) return;
+
+    availableSeats.Clear();
+    foreach (Transform s in seats)
+    {
+        if (s != null) availableSeats.Add(s);
+    }
+    }
+
     // =========================
     // SEAT SYSTEM (UNCHANGED)
     // =========================
@@ -37,6 +50,19 @@ public class PassengerSeatManager : MonoBehaviour
 
         availableSeats.RemoveAt(index);
         return seat;
+    }
+
+    public int GetAvailableSeatIndex()
+    {
+    if (availableSeats.Count == 0) return -1;
+    
+    int randomIndex = Random.Range(0, availableSeats.Count);
+    Transform seat = availableSeats[randomIndex];
+    
+    int originalIndex = System.Array.IndexOf(seats, seat);
+    
+    availableSeats.RemoveAt(randomIndex);
+    return originalIndex;
     }
 
     public bool IsFull()
@@ -90,17 +116,19 @@ public class PassengerSeatManager : MonoBehaviour
     // STEP 2: EXECUTE drop
     public void ExecuteDrop()
     {
-        if (!dropPrepared) return; // 🔥 prevents accidental full drop
+        if (!IsServer) return; 
+        
+        if (!dropPrepared) return;
 
         foreach (PassengerAI p in pendingDropPassengers)
         {
             if (p == null) continue;
 
             RemoveOnboard(p);
-            p.InstantDropOff();
+            p.InstantDropOff(); 
         }
 
         pendingDropPassengers.Clear();
-        dropPrepared = false; // 🔥 reset for next stop
+        dropPrepared = false;
     }
 }

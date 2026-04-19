@@ -206,6 +206,7 @@ GameObject:
   - component: {fileID: -1007617662038686454}
   - component: {fileID: 6986207479404387609}
   - component: {fileID: -6112887957654407065}
+  - component: {fileID: 3038992074645691415}
   m_Layer: 0
   m_Name: PlayerDummy
   m_TagString: Player
@@ -350,7 +351,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 74588362
+  GlobalObjectIdHash: 2891838690
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -393,8 +394,6 @@ MonoBehaviour:
   maxSlopeAngle: 45
   slopeRayLength: 1.5
   cameraController: {fileID: 507332023014374735}
-  moveJoystick: {fileID: 0}
-  jumpButton: {fileID: 0}
   uiPrefab: {fileID: 2906072408217865552, guid: 3b6ba6134fb3f824a90cd61182b27b94, type: 3}
 --- !u!114 &-6112887957654407065
 MonoBehaviour:
@@ -442,6 +441,41 @@ MonoBehaviour:
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &3038992074645691415
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5545258482497734629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12ec763844d093d4d9a1932f9073acb3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SanityManager
+  ShowTopMostFoldoutHeaderGroup: 1
+  maxSanity: 100
+  drainRate: 5
+  drainDelay: 1.5
+  flashIntensity: 0.5
+  flashSpeed: 4
+  sanityFrames:
+  - {fileID: 1288640311, guid: 80060fbf60ab52446ab98cbdc38e9ef5, type: 3}
+  - {fileID: 424692015, guid: 80060fbf60ab52446ab98cbdc38e9ef5, type: 3}
+  - {fileID: 500654860, guid: 80060fbf60ab52446ab98cbdc38e9ef5, type: 3}
+  - {fileID: -891068951, guid: 80060fbf60ab52446ab98cbdc38e9ef5, type: 3}
+  - {fileID: 571491742, guid: 80060fbf60ab52446ab98cbdc38e9ef5, type: 3}
+  - {fileID: 515592132, guid: 80060fbf60ab52446ab98cbdc38e9ef5, type: 3}
+  - {fileID: 265002850, guid: 80060fbf60ab52446ab98cbdc38e9ef5, type: 3}
+  - {fileID: 2042565374, guid: 80060fbf60ab52446ab98cbdc38e9ef5, type: 3}
+  - {fileID: 1529575563, guid: 80060fbf60ab52446ab98cbdc38e9ef5, type: 3}
+  - {fileID: 1971730971, guid: 80060fbf60ab52446ab98cbdc38e9ef5, type: 3}
+  - {fileID: 1922346828, guid: 80060fbf60ab52446ab98cbdc38e9ef5, type: 3}
+  - {fileID: -859459620, guid: 80060fbf60ab52446ab98cbdc38e9ef5, type: 3}
+  - {fileID: -2482657, guid: 80060fbf60ab52446ab98cbdc38e9ef5, type: 3}
+  - {fileID: 577331171, guid: 80060fbf60ab52446ab98cbdc38e9ef5, type: 3}
+  - {fileID: 1873544371, guid: 80060fbf60ab52446ab98cbdc38e9ef5, type: 3}
+  - {fileID: -354298394, guid: 80060fbf60ab52446ab98cbdc38e9ef5, type: 3}
 --- !u!1 &6393786004075026472
 GameObject:
   m_ObjectHideFlags: 0
